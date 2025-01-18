@@ -1,4 +1,4 @@
-package com.interviewai.models;
+package com.interviewai.user;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -6,10 +6,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-class User {
+public class User {
 
     @Id @GeneratedValue(strategy=GenerationType.AUTO)
-    private Long id;
+    private Long userId;
     private String username;
     private String email;
     private String rank = "unranked";
@@ -19,8 +19,16 @@ class User {
         this.email = email;
     }
 
+    @Override
+    public String toString() {
+        return String.format(
+                "Customer[id=%d, username='%s', email='%s', rank='%s']",
+                userId, username, email, rank
+        );
+    }
+
     public Long getId() {
-        return id;
+        return userId;
     }
 
     public String getUsername() {
