@@ -1,4 +1,8 @@
 /Users/michael/Documents/Code/DOM/interviewai/backend/interviewai/src/main/java/com/interviewai/InterviewaiApplication.java
+/Users/michael/Documents/Code/DOM/interviewai/backend/interviewai/src/main/java/com/interviewai/interview/Interview.java
+/Users/michael/Documents/Code/DOM/interviewai/backend/interviewai/src/main/java/com/interviewai/interview/InterviewController.java
+/Users/michael/Documents/Code/DOM/interviewai/backend/interviewai/src/main/java/com/interviewai/interview/InterviewRepository.java
+/Users/michael/Documents/Code/DOM/interviewai/backend/interviewai/src/main/java/com/interviewai/interview/InterviewService.java
 /Users/michael/Documents/Code/DOM/interviewai/backend/interviewai/src/main/java/com/interviewai/interviewer/Interviewer.java
 /Users/michael/Documents/Code/DOM/interviewai/backend/interviewai/src/main/java/com/interviewai/interviewer/InterviewerController.java
 /Users/michael/Documents/Code/DOM/interviewai/backend/interviewai/src/main/java/com/interviewai/interviewer/InterviewerRepository.java
