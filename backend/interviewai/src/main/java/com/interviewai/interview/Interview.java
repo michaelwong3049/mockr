@@ -1,6 +1,6 @@
 package com.interviewai.interview;
 
-import wence.Entity;
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,8 +22,8 @@ public class Interview {
     )
 
     private Long id; 
-    private int user_id;
-    private int question_id;
+    private Long user_id;
+    private Long question_id;
     private String code;
     private int communication;
     private int result;
