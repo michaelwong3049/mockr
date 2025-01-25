@@ -3,3 +3,7 @@
 /Users/michael/Documents/Code/DOM/interviewai/backend/interviewai/src/main/java/com/interviewai/interviewer/InterviewerController.java
 /Users/michael/Documents/Code/DOM/interviewai/backend/interviewai/src/main/java/com/interviewai/interviewer/InterviewerRepository.java
 /Users/michael/Documents/Code/DOM/interviewai/backend/interviewai/src/main/java/com/interviewai/interviewer/InterviewerService.java
+/Users/michael/Documents/Code/DOM/interviewai/backend/interviewai/src/main/java/com/interviewai/question/Question.java
+/Users/michael/Documents/Code/DOM/interviewai/backend/interviewai/src/main/java/com/interviewai/question/QuestionController.java
+/Users/michael/Documents/Code/DOM/interviewai/backend/interviewai/src/main/java/com/interviewai/question/QuestionRepository.java
+/Users/michael/Documents/Code/DOM/interviewai/backend/interviewai/src/main/java/com/interviewai/question/QuestionService.java
