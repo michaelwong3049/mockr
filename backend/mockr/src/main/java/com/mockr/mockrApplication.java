@@ -1,13 +1,13 @@
-package com.interviewai;
+package com.mockr;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class InterviewaiApplication {
+public class mockrApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(InterviewaiApplication.class, args);
+		SpringApplication.run(mockrApplication.class, args);
 	}
 
 }
