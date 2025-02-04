@@ -9,55 +9,65 @@ import jakarta.persistence.SequenceGenerator;
 @Entity
 public class Question {
 
-    @Id
-    @SequenceGenerator(
-        name = "question_sequence",
-        sequenceName = "question_sequence",
-        allocationSize = 1
-    )
-    @GeneratedValue(
-        strategy = GenerationType.SEQUENCE,
-        generator = "question_sequence"
-    )
-    private Long id;
-    private String question;
-    private String difficulty;
-    private String constraints;
+  @Id
+  @SequenceGenerator(
+  name = "question_sequence",
+  sequenceName = "question_sequence",
+  allocationSize = 1
+  )
+  @GeneratedValue(
+  strategy = GenerationType.SEQUENCE,
+  generator = "question_sequence"
+  )
+  private Long id;
+  private String question;
+  private String questionType;
+  private String difficulty;
+  private String constraints;
 
-    Question() {}
+  Question() {}
 
-    Question(String question, String difficulty, String constraints) {
-        this.question = question;
-        this.difficulty = difficulty;
-        this.constraints = constraints;
-    }
+  public Question(String question, String questionType, String difficulty, String constraints) {
+    this.question = question;
+    this.questionType = questionType;
+    this.difficulty = difficulty;
+    this.constraints = constraints;
+  }
 
-    Long getId() {
-        return id;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    String getQuestion() {
-        return question;
-    }
+  public String getQuestion() {
+    return question;
+  }
 
-    String getDifficulty() {
-        return difficulty;
-    }
+  public String getDifficulty() {
+    return difficulty;
+  }
 
-    String getConstraints() {
-        return constraints;
-    }
+  public String getConstraints() {
+    return constraints;
+  }
 
-    void setQuestion(String question) {
-        this.question = question;
-    }
-    
-    void setDifficulty(String difficulty) {
-        this.difficulty = difficulty;
-    }
+  public String getQuestionType() {
+    return questionType;
+  }
 
-    void setConstraints(String constraints) {
-        this.constraints = constraints;
-    }
+  public void setQuestion(String question) {
+    this.question = question;
+  }
+
+  public void setQuestionType(String questionType) {
+    this.questionType = questionType;
+  }
+
+  public void setDifficulty(String difficulty) {
+    this.difficulty = difficulty;
+  }
+
+  public void setConstraints(String constraints) {
+    this.constraints = constraints;
+  }
 
 }
