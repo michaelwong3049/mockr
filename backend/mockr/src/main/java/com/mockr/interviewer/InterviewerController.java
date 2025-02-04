@@ -1,5 +1,7 @@
 package com.mockr.interviewer;
 
+import com.mockr.question.Question;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
@@ -60,13 +63,24 @@ public class InterviewerController {
     @CrossOrigin
     @PostMapping 
     public Interviewer createInterviewer(@RequestBody Interviewer interviewer) throws Exception {
-        try { 
+        try {
+	    interviewer.addSolved();
             Interviewer interviewerOpt = interviewerService.createInterviewer(interviewer);
             return interviewerOpt;
         } catch (Exception exception) {
             throw new Exception("Error saving interviewer in InterviewerController");
         }
     }
+
+	//   @CrossOrigin
+	//   @PutMapping
+	//   public Interviewer updateInterviewer(@PathVariable String id, @RequestBody Interviewer interviewer) throws Exception {
+	//     try {
+	//
+	//     } catch (Exception exception) {
+	//throw new Exception("Error updating interviewer in InterviewerController");
+	//     }
+	//   }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteInterviewer(@PathVariable String id) throws Exception {

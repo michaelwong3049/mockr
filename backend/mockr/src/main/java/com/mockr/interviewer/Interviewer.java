@@ -3,13 +3,13 @@ package com.mockr.interviewer;
 import com.mockr.question.Question;
 
 import jakarta.persistence.Id;
-//import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-//import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-//import jakarta.persistence.GenerationType;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table
@@ -19,7 +19,8 @@ public class Interviewer {
   private String username;
   private String email;
   private String rank = "Unranked";
-  private ArrayList<Question> solvedQuestions = new ArrayList<>();
+  @OneToMany(cascade = CascadeType.ALL)
+  private List<Question> solvedQuestions = new ArrayList<Question>();
 
   Interviewer() {}
 
@@ -44,7 +45,7 @@ public class Interviewer {
     return rank;
   }
 
-  public ArrayList<Question> getSolved() {
+  public List<Question> getSolved() {
     return solvedQuestions;
   }
 
@@ -64,7 +65,7 @@ public class Interviewer {
     this.rank = rank;
   }
 
-  public void addSolved(Question solved) {
+  public void addSolved() {
     solvedQuestions.add(
 	new Question("Two Sum", "Arrays and Hashing", "Easy", "None")
     );
