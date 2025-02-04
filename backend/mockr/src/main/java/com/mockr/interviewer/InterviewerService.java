@@ -16,7 +16,7 @@ public class InterviewerService {
         this.interviewerRepository = interviewerRepository;
     }
 
-    public Optional<Interviewer> getInterviewer(Long id) {
+    public Optional<Interviewer> getInterviewer(String id) {
         try {
             return interviewerRepository.findById(id);
         } catch (Exception exception){
@@ -37,7 +37,7 @@ public class InterviewerService {
         }
     }
 
-    public void deleteInterviewer(Long id) throws Exception {
+    public void deleteInterviewer(String id) throws Exception {
         try {
             interviewerRepository.deleteById(id);
         } catch (Exception exception) {

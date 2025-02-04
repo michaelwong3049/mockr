@@ -9,13 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
-
 
 @RestController
 @RequestMapping(path="api/interviewer")
@@ -28,16 +26,15 @@ public class InterviewerController {
         this.interviewerService = interviewerService;
     }
 
+    @CrossOrigin
     @GetMapping("/{id}")
-    public ResponseEntity<Interviewer> getInterviewer(@PathVariable Long id) throws Exception {
+    public Interviewer getInterviewer(@PathVariable String id) throws Exception {
         Optional<Interviewer> interviewerOpt = interviewerService.getInterviewer(id);
         if(interviewerOpt.isPresent()) {
             if(interviewerOpt.get().getUsername() == null) {
                 throw new Exception("There is no username attached to this user");
             }
-            return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(interviewerOpt.get());
+            return interviewerOpt.get();
         } else {
             throw new Exception("This interviewer does not exist.");
         }
@@ -60,26 +57,25 @@ public class InterviewerController {
         }
     }
 
+    @CrossOrigin
     @PostMapping 
-    public ResponseEntity<Interviewer> createInterviewer(@RequestBody Interviewer interviewer) throws Exception {
+    public Interviewer createInterviewer(@RequestBody Interviewer interviewer) throws Exception {
         try { 
             Interviewer interviewerOpt = interviewerService.createInterviewer(interviewer);
-            return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(interviewerOpt);
+            return interviewerOpt;
         } catch (Exception exception) {
             throw new Exception("Error saving interviewer in InterviewerController");
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteInterviewer(@PathVariable Long id) throws Exception {
+    public ResponseEntity<String> deleteInterviewer(@PathVariable String id) throws Exception {
         try {
             interviewerService.deleteInterviewer(id);
             return ResponseEntity
                 // successful deletion, no response body
                 .status(204)
-                .body("Successfully deletd" + id);
+                .body("Successfully deleted" + id);
         } catch (Exception exception) {
             throw new Exception("Error deleteing interviewer in InterviewerController");
         }
