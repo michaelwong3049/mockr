@@ -4,3 +4,10 @@ export interface Topic {
   completed: string;
 }
 
+export interface Question {
+  question: string,
+  questionType: string,
+  difficulty: string,
+  constraints: string
+}
+
