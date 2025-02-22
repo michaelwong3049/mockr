@@ -13,9 +13,9 @@ import { useState, useEffect } from "react";
 
 
 export default function Practice({ params }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ username: string }>
 }) {
-  const [slug, setSlug] = useState<string | null>();
+  const [username, setUsername] = useState<string | null>();
   const [interviewer, setInterviewer] = useState();
   const [arraysAndHashing, setArraysAndHashing] = useState<number>(0);
   const [twoPointers, setTwoPointers] = useState<number>(0);
@@ -23,7 +23,7 @@ export default function Practice({ params }: {
 
   useEffect(() => {
     const getSlug = async () => {
-      setSlug((await params).slug);
+      setUsername((await params).username);
     }
 
     const getInterviewerInfo = async () => {
@@ -47,7 +47,7 @@ export default function Practice({ params }: {
 
 	if(question[i].questionType == "Two Pointers") {
 	  setTwoPointers(twoPointers + 1);
-	}
+}
 
 	if(question[i].questionType == "Linked Lists") {
 	  setLinkedLists(linkedLists + 1);
@@ -84,32 +84,54 @@ export default function Practice({ params }: {
   ]
 
   return (
-    <div className="w-full flex justify-center gap-x-12 mt-10">
-      {topics.map((topic, index) => (
+    <div className="flex flex-col">
+      <div className="w-full flex justify-center gap-x-12 mt-10">
+	{topics.map((topic, index) => (
+	  <Link
+	  key={index}
+	  href={{
+	    pathname: `/${username}/practice/${topic.title_name}`,
+	    query: {
+	      title: topic.title_name
+	    }
+	  }}
+	  >
+	    <Card>
+	      <CardHeader>
+		<CardTitle className="text-center">{topic.title_name}</CardTitle>
+		<CardDescription className="text-center">{topic.description}</CardDescription>
+	      </CardHeader>
+	      <CardContent>
+		<p></p>
+	      </CardContent>
+	      <CardFooter className="flex flex-col items-center">
+		<p>Questions Completed:</p>
+		<p className="text-bold">{topic.completed}</p>
+	      </CardFooter>
+	    </Card>
+	  </Link>
+	))}
+      </div>
+      <div>
 	<Link
-	key={index}
 	href={{
-	  pathname: `/${slug}/practice/${topic.title_name}`,
+	  pathname: `/${username}/practice/random/random`,
 	  query: {
-	    title: topic.title_name
+	    title: "random"
 	  }
 	}}
 	>
 	  <Card>
 	    <CardHeader>
-	      <CardTitle className="text-center">{topic.title_name}</CardTitle>
-	      <CardDescription className="text-center">{topic.description}</CardDescription>
+	      <CardTitle className="text-center">Try A Random Question!</CardTitle>
+	      <CardDescription className="text-center">Test Your Range of Knowledge...</CardDescription>
 	    </CardHeader>
 	    <CardContent>
 	      <p></p>
 	    </CardContent>
-	    <CardFooter className="flex flex-col items-center">
-	      <p>Questions Completed:</p>
-	      <p className="text-bold">{topic.completed}</p>
-	    </CardFooter>
 	  </Card>
 	</Link>
-      ))}
+      </div>
     </div>
   )
 }

@@ -7,7 +7,7 @@ import { Card, CardTitle, CardHeader, CardFooter, CardDescription, CardContent }
 import Link from "next/link";
 
 export default function PracticeTopic({ params }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ username: string }>
 }) {
   const [slug, setSlug] = useState<string>();
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -17,7 +17,7 @@ export default function PracticeTopic({ params }: {
   
   useEffect(() => {
     const getSlug = async () => {
-      setSlug((await params).slug);
+      setSlug((await params).username);
     }
 
     const getQuestions = async () => {
@@ -36,8 +36,6 @@ export default function PracticeTopic({ params }: {
     getSlug();
     getQuestions();
   }, [])
-
-    console.log(questions);
 
   return(
     <div className="flex flex-col justify-center items-center">
