@@ -1,0 +1,3 @@
+INFO:myagent:TESTING....
+DEBUG:asyncio:Using selector: KqueueSelector
+DEV:livekit.agents:Watching /Users/michael/Documents/Code/DOM/mockr/backend/python-backend
