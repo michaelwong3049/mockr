@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AIInterviewer from "@/components/AIInterviewer";
 import { InterviewInfo } from "@/lib/types";
 import { Socket, io } from "socket.io-client";
 import Editor from "@monaco-editor/react";
@@ -16,13 +17,37 @@ export default function InterviewPage() {
   const [interviewInfo, setInterviewInfo] = useState<InterviewInfo>();
   const [code, setCode] = useState<string | undefined>("// Write your code here");
   const editorRef = useRef<null | monaco.editor.IStandaloneCodeEditor>(null);
-  const socketRef = useRef<Socket>(undefined);
+  const socketRef = useRef<Socket | null>(null);
 
-  // creating default value for the question
+  // socketio initialization
+  useEffect(() => {
+    if(!socketRef.current){
+      socketRef.current = io("http://127.0.0.1:5000");
+      console.log("connecting to the socketio instance");
+    } 
+
+    socketRef.current.on("connect", () => {
+      console.log("-- socket.io connected --");	
+    })
+
+    socketRef.current.on("disconnect", () => {
+      console.log("-- socket.io disconnected --");
+    })
+
+    socketRef.current.on("connect_error", (error: any) => {
+      if (socketRef.current!.active) {
+	console.log("connection error && socket active");
+      } else {
+	console.log("connection error & socket not active + ", error.message);
+      }
+    });
+  }, [])
+
+  // setting up default values
   useEffect(() => {
     const defaultInterview: InterviewInfo = {
-      question: "Two Sum",
-      question_title: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice. You can return the answer in any order.",
+      question_title: "Two Sum",
+      question: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice. You can return the answer in any order.",
       constraints: "N/A",
       examples: [
 	{
@@ -40,37 +65,17 @@ export default function InterviewPage() {
     setInterviewInfo(defaultInterview);
   }, [])
 
-  // socketio initialization and sending data
+  // sending data through the socket instance
   useEffect(() => {
-    if(!socketRef.current){
-      socketRef.current = io("http://127.0.0.1:5000");
-    } 
-
-    socketRef.current.on("connect", () => {
-      console.log("-- socket.io connected --");	
-    })
-
-    socketRef.current.on("connect_error", (error: any) => {
-      if (socketRef.current!.active) {
-	console.log("connection error && socket active");
-      } else {
-	console.log("connection error & socket not active + ", error.message);
-      }
-    });
-
-    socketRef.current.on("disconnect", () => {
-      console.log("-- socket.io disconnected --");
-    })
-
-    if(socketRef.current.connected) {
-      if(interviewInfo?.question) {
+    if(socketRef.current?.connected && interviewInfo) {
+      if(interviewInfo != undefined) {
 	const data = {
 	  code: code,
 	  question: interviewInfo.question
 	}
 
 	// sends data for flask backend in api.py
-	socketRef.current.emit("update interview", { code, question: interviewInfo?.question }, () => {
+	socketRef.current.emit("update interview", { data }, () => {
 	  console.log("sending interview info to api.py");
 	})
       }
@@ -108,7 +113,7 @@ export default function InterviewPage() {
 		<TabsTrigger value="question">Question</TabsTrigger>
 		<TabsTrigger value="testcases">Test Cases</TabsTrigger>
 	      </TabsList>
-	      <TabsContent value="question" className="h-full overflow-auto">
+	      <TabsContent value="question" className="h-3/4 overflow-auto">
 		<h2 className="text-2xl font-bold mb-4">{interviewInfo.question_title}</h2>
 		<p className="mb-4">{interviewInfo.question}</p>
 		<h3 className="text-xl font-semibold mb-2">Constraints:</h3>
@@ -127,6 +132,10 @@ export default function InterviewPage() {
 		    )
 		  })}
 		</pre>
+		<div className="mt-2 flex flex-col justify-center">
+		  <h3 className="text-center font-bold">AI Interviewer</h3>
+		  <AIInterviewer/>
+		</div>
 	      </TabsContent>
 	      <TabsContent value="testcases" className="h-full overflow-auto">
 		<h3 className="text-xl font-semibold mb-2">Test Cases:</h3>
