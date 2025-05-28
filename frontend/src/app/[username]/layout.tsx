@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/ui/app-sidebar";
 import {
@@ -39,13 +39,17 @@ export default function RootLayout({
 	>
 	  <header>
 	    <SignedOut>
-	      {/* <SignInButton/> */}
+	      <SignInButton/>
 	    </SignedOut>
 	    <SignedIn>
-	      {/* <UserButton/> */}
+	      <UserButton/>
 	    </SignedIn>
 	  </header>
+	  <SidebarProvider>
+	    <AppSidebar />
+	    <SidebarTrigger />
 	    {children}
+	  </SidebarProvider>
 	</body>
       </html>
     </ClerkProvider>
