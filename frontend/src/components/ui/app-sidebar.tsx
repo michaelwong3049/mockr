@@ -14,20 +14,10 @@ import {
 // Menu items.
 const items = [
     {
-        title: "Home",
-        url: "/elecmiccow/dashboard/",
-        icon: Home,
-    },
-    {
         title: "Practice",
         url: "/elecmiccow/practice/",
         icon: Dumbbell,
     },
-    {
-        title: "Company Questions",
-        url: "/elecmiccow/company/",
-        icon: Building,
-   }
 ]
 
 export function AppSidebar() {
