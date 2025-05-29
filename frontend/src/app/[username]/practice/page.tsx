@@ -1,115 +1,140 @@
 "use client";
-import Link from "next/link";
+
+import React from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Topic } from "@/lib/types";
-import { useState, useEffect } from "react";
+  ArrowRight,
+  Code,
+  ListTree,
+  GitBranch,
+  SlidersHorizontal,
+  Network,
+  BrainCircuit,
+  Database,
+  Layers,
+} from "lucide-react";
 
+interface TopicCardProps {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  onClick?: () => void;
+}
 
-export default function Practice({ params }: {
-  params: Promise<{ slug: string }>
-}) {
-  const [slug, setSlug] = useState<string | null>();
-  const [interviewer, setInterviewer] = useState();
-  const [arraysAndHashing, setArraysAndHashing] = useState<number>(0);
-  const [twoPointers, setTwoPointers] = useState<number>(0);
-  const [linkedLists, setLinkedLists] = useState<number>(0);
+function TopicCard ({
+  title,
+  description,
+  icon,
+  onClick,
+}: TopicCardProps) {
+  return (
+    <div
+      onClick={onClick}
+      className="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-all cursor-pointer flex flex-col h-full"
+    >
+      <div className="flex items-center mb-4">
+        <div className="p-3 rounded-full bg-primary/10 text-primary mr-4">
+          {icon}
+        </div>
+        <h3 className="text-lg font-semibold">{title}</h3>
+      </div>
+      <p className="text-gray-600 text-sm flex-grow">{description}</p>
+      <div className="flex justify-end mt-4">
+        <Button variant="ghost" size="sm" className="text-primary">
+          Practice <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
+    </div>
+  );
+};
 
-  useEffect(() => {
-    const getSlug = async () => {
-      setSlug((await params).slug);
-    }
-
-    const getInterviewerInfo = async () => {
-      const data = await fetch("/api/interviewer", {
-	method: "GET",
-	headers: { 
-	  "Content-Type": "application/json"
-	}
-      }); 
-
-      const interviewerData = await data.json();
-      setInterviewer(interviewerData);
-
-
-      // getting the # of questions solved data
-      for(let i = 0; i < interviewerData.solved.length; i++) {
-	const question = interviewerData.solved
-	if(question[i].questionType == "Arrays and Hashing") {
-	  setArraysAndHashing(arraysAndHashing + 1);
-	}
-
-	if(question[i].questionType == "Two Pointers") {
-	  setTwoPointers(twoPointers + 1);
-	}
-
-	if(question[i].questionType == "Linked Lists") {
-	  setLinkedLists(linkedLists + 1);
-	}
-      }
-    }
-
-    getSlug();
-    getInterviewerInfo();
-
-  }, [])
-
-  const topics: Array<Topic> = [
+// const Dashboard: React.FC = () => {
+export default function Practice() {
+	const router = useRouter();
+  const topics = [
     {
-      title_name: "Arrays and Hashing",
-      description: "Master 2D matrices, hash maps, sets, subarrys, and more!",
-      completed: `${arraysAndHashing}/7`
+      title: "Two Pointers",
+      description:
+        "Master the two-pointer technique for array and string problems with efficient O(n) solutions.",
+      icon: <Code className="h-6 w-6" />,
+    },
+		{
+			title: "Sliding Window",
+			description:
+			"Learn to solve substring and subarray problems with the sliding window technique.",
+			icon: <SlidersHorizontal className="h-6 w-6" />,
+		},
+    {
+      title: "Linked Lists",
+      description:
+        "Practice traversal, reversal, and manipulation of singly and doubly linked lists.",
+      icon: <ListTree className="h-6 w-6" />,
     },
     {
-      title_name: "Two Pointers",
-      description: "Understand concepts like sliding window, fast and slow pointers, and more!",
-      completed: `${twoPointers}/7`
+      title: "Trees",
+      description:
+        "Explore binary trees, BSTs, and tree traversal algorithms for hierarchical data.",
+      icon: <GitBranch className="h-6 w-6" />,
     },
     {
-      title_name: "Linked Lists",
-      description: "Learn concepts like reversing linked lists, merging, and more!",
-      completed: `${linkedLists}/7`
+      title: "Graphs",
+      description:
+        "Master DFS, BFS, and shortest path algorithms for graph-based problems.",
+      icon: <Network className="h-6 w-6" />,
     },
-    //{
-    //  title_name: "Trees",
-    //  description: "Find more about depth/breadth first search, traversal types, and more!",
-    //  completed: "0/7",
-    //},
-  ]
+    {
+      title: "Dynamic Programming",
+      description:
+        "Tackle optimization problems by breaking them down into overlapping subproblems.",
+      icon: <BrainCircuit className="h-6 w-6" />,
+    },
+    {
+      title: "Heaps & Priority Queues",
+      description:
+        "Solve problems involving finding the kth largest/smallest elements efficiently.",
+      icon: <Database className="h-6 w-6" />,
+    },
+    {
+      title: "System Design",
+      description:
+        "Practice designing scalable systems and discussing architectural trade-offs.",
+      icon: <Layers className="h-6 w-6" />,
+    },
+  ];
 
   return (
-    <div className="w-full flex justify-center gap-x-12 mt-10">
-      {topics.map((topic, index) => (
-	<Link
-	key={index}
-	href={{
-	  pathname: `/${slug}/practice/${topic.title_name}`,
-	  query: {
-	    title: topic.title_name
-	  }
-	}}
-	>
-	  <Card>
-	    <CardHeader>
-	      <CardTitle className="text-center">{topic.title_name}</CardTitle>
-	      <CardDescription className="text-center">{topic.description}</CardDescription>
-	    </CardHeader>
-	    <CardContent>
-	      <p></p>
-	    </CardContent>
-	    <CardFooter className="flex flex-col items-center">
-	      <p>Questions Completed:</p>
-	      <p className="text-bold">{topic.completed}</p>
-	    </CardFooter>
-	  </Card>
-	</Link>
-      ))}
+    <div className="w-full min-h-screen">
+      <div className="container mx-auto py-8 px-4">
+        <div className="mb-8">
+					<div className="flex gap-2">
+						<h1 className="text-3xl font-bold mb-2">
+							mockr
+						</h1>
+						<h1 className="text-3xl mb-2">
+							Practice Dashboard
+						</h1>
+					</div>
+          <p className="text-gray-600">
+            Select a topic to start practicing interview questions
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {topics.map((topic, index) => (
+            <TopicCard
+              key={index}
+              title={topic.title}
+              description={topic.description}
+              icon={topic.icon}
+              onClick={() => 
+								{
+								router.push(`practice/${topic.title}`)}
+							}
+            />
+          ))}
+        </div>
+      </div>
     </div>
-  )
-}
+  );
+};
