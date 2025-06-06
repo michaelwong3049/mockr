@@ -5,7 +5,6 @@ com/mockr/interview/Interview.class
 com/mockr/interviewer/InterviewerController.class
 com/mockr/interviewer/InterviewerRepository.class
 com/mockr/question/Question.class
-com/mockrr/mockrApplication.class
 com/mockr/question/QuestionService.class
 com/mockr/interview/InterviewRepository.class
 com/mockr/interview/InterviewService.class

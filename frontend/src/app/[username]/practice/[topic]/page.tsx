@@ -36,6 +36,10 @@ export default function TopicPage() {
 		}
 	}, [])
 
+	useEffect(() => {
+		console.log(currentQuestions);
+	}, [currentQuestions])
+
 	return (
 		<div className="w-full min-h-screen">
 			<div className="container mx-auto py-8 px-4">

@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,7 @@ public class QuestionController {
         this.questionService = questionService;
     }   
 
+		@CrossOrigin
     @GetMapping("/{id}")
     public ResponseEntity<Question> getQuestion(@PathVariable Long id) throws Exception {
         try {
@@ -43,6 +45,7 @@ public class QuestionController {
         }
     }
 
+		@CrossOrigin
     @GetMapping
     public ResponseEntity<List<Question>> getQuestions() throws Exception {
         try {
@@ -60,6 +63,7 @@ public class QuestionController {
         }
     }
     
+		@CrossOrigin
     @PostMapping()
     public ResponseEntity<Question> createQuestion(@RequestBody Question question) throws Exception {
         try {
@@ -72,6 +76,7 @@ public class QuestionController {
         }
     }
 
+		@CrossOrigin
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteQuestion(@PathVariable Long id) throws Exception {
         try {
