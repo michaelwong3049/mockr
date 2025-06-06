@@ -1,24 +1,18 @@
 "use client";
 
 import React from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {
-  ArrowRight,
-  Code,
-  ListTree,
-  GitBranch,
-  SlidersHorizontal,
-  Network,
-  BrainCircuit,
-  Database,
-  Layers,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { topics } from "@/lib/topics";
+import { Question } from "@/lib/utils";
 
 interface TopicCardProps {
   title: string;
   description: string;
   icon: React.ReactNode;
+	solved: number;
   onClick?: () => void;
 }
 
@@ -26,6 +20,7 @@ function TopicCard ({
   title,
   description,
   icon,
+	solved,
   onClick,
 }: TopicCardProps) {
   return (
@@ -40,7 +35,10 @@ function TopicCard ({
         <h3 className="text-lg font-semibold">{title}</h3>
       </div>
       <p className="text-gray-600 text-sm flex-grow">{description}</p>
-      <div className="flex justify-end mt-4">
+      <div className="flex items-center text-sm justify-end mt-4">
+				<div className="bg-gray-100 border-2 rounded-[25px] px-2 py-1">
+					{solved}/9
+				</div>
         <Button variant="ghost" size="sm" className="text-primary">
           Practice <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
@@ -49,59 +47,43 @@ function TopicCard ({
   );
 };
 
-// const Dashboard: React.FC = () => {
 export default function Practice() {
+	// TODO: add type generic for this later...
+	const [solvedQuestions, setSolvedQuestions] = useState<Question[]>([]);
+	const topicQuestionsMap = new Map<string, number>();
 	const router = useRouter();
-  const topics = [
-    {
-      title: "Two Pointers",
-      description:
-        "Master the two-pointer technique for array and string problems with efficient O(n) solutions.",
-      icon: <Code className="h-6 w-6" />,
-    },
-		{
-			title: "Sliding Window",
-			description:
-			"Learn to solve substring and subarray problems with the sliding window technique.",
-			icon: <SlidersHorizontal className="h-6 w-6" />,
-		},
-    {
-      title: "Linked Lists",
-      description:
-        "Practice traversal, reversal, and manipulation of singly and doubly linked lists.",
-      icon: <ListTree className="h-6 w-6" />,
-    },
-    {
-      title: "Trees",
-      description:
-        "Explore binary trees, BSTs, and tree traversal algorithms for hierarchical data.",
-      icon: <GitBranch className="h-6 w-6" />,
-    },
-    {
-      title: "Graphs",
-      description:
-        "Master DFS, BFS, and shortest path algorithms for graph-based problems.",
-      icon: <Network className="h-6 w-6" />,
-    },
-    {
-      title: "Dynamic Programming",
-      description:
-        "Tackle optimization problems by breaking them down into overlapping subproblems.",
-      icon: <BrainCircuit className="h-6 w-6" />,
-    },
-    {
-      title: "Heaps & Priority Queues",
-      description:
-        "Solve problems involving finding the kth largest/smallest elements efficiently.",
-      icon: <Database className="h-6 w-6" />,
-    },
-    {
-      title: "System Design",
-      description:
-        "Practice designing scalable systems and discussing architectural trade-offs.",
-      icon: <Layers className="h-6 w-6" />,
-    },
-  ];
+
+	useEffect(() => {
+		const fetchQuestions = async () => {
+			const data = await fetch("http://localhost:8080/api/question", {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json"
+				}
+			})
+			
+			const questionsJson = await data.json();
+			for(let question = 0; question < questionsJson.length; question++) {
+				let currentTopic = questionsJson[question].getQuestionType;
+
+				for(let i = 0; i < topics.length; i++) {
+					if(topics[i].title == currentTopic) {
+						topicQuestionsMap.set(currentTopic, (topicQuestionsMap.get(currentTopic) ?? 0) + 1)
+					}
+					else {
+						// this set function might cause errors because of type errors...
+						setSolvedQuestions(prev => [...prev, questionsJson[question]])
+					}
+				}
+			}
+		}
+
+		fetchQuestions();
+	}, [])
+
+	useEffect(() => {
+		console.log(solvedQuestions);
+	}, [solvedQuestions])
 
   return (
     <div className="w-full min-h-screen">
@@ -127,6 +109,7 @@ export default function Practice() {
               title={topic.title}
               description={topic.description}
               icon={topic.icon}
+							solved={topicQuestionsMap.get(topic.title) ?? 0}
               onClick={() => 
 								{
 								router.push(`practice/${topic.title}`)}
