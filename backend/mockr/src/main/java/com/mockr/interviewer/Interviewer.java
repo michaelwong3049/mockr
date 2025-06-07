@@ -67,7 +67,7 @@ public class Interviewer {
 
   public void addSolved() {
     solvedQuestions.add(
-	new Question("Two Sum", "Arrays and Hashing", "Easy", "None")
+      new Question("Two Sum", "Arrays and Hashing", "Easy", "None")
     );
   }
 
