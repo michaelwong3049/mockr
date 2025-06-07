@@ -12,7 +12,7 @@ interface TopicCardProps {
   title: string;
   description: string;
   icon: React.ReactNode;
-	solved: number;
+  solved: number;
   onClick?: () => void;
 }
 
@@ -20,7 +20,7 @@ function TopicCard ({
   title,
   description,
   icon,
-	solved,
+  solved,
   onClick,
 }: TopicCardProps) {
   return (
@@ -36,9 +36,9 @@ function TopicCard ({
       </div>
       <p className="text-gray-600 text-sm flex-grow">{description}</p>
       <div className="flex items-center text-sm justify-end mt-4">
-				<div className="bg-gray-100 border-2 rounded-[25px] px-2 py-1">
-					{solved}/9
-				</div>
+        <div className="bg-gray-100 border-2 rounded-[25px] px-2 py-1">
+          {solved}/9
+        </div>
         <Button variant="ghost" size="sm" className="text-primary">
           Practice <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
@@ -48,55 +48,55 @@ function TopicCard ({
 };
 
 export default function Practice() {
-	// TODO: add type generic for this later...
-	const [solvedQuestions, setSolvedQuestions] = useState<Question[]>([]);
-	const topicQuestionsMap = new Map<string, number>();
-	const router = useRouter();
+  // TODO: add type generic for this later...
+  const [solvedQuestions, setSolvedQuestions] = useState<Question[]>([]);
+  const topicQuestionsMap = new Map<string, number>();
+  const router = useRouter();
 
-	useEffect(() => {
-		const fetchQuestions = async () => {
-			const data = await fetch("http://localhost:8080/api/question", {
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json"
-				}
-			})
-			
-			const questionsJson = await data.json();
-			for(let question = 0; question < questionsJson.length; question++) {
-				let currentTopic = questionsJson[question].getQuestionType;
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      const data = await fetch("http://localhost:8080/api/question", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
 
-				for(let i = 0; i < topics.length; i++) {
-					if(topics[i].title == currentTopic) {
-						topicQuestionsMap.set(currentTopic, (topicQuestionsMap.get(currentTopic) ?? 0) + 1)
-					}
-					else {
-						// this set function might cause errors because of type errors...
-						setSolvedQuestions(prev => [...prev, questionsJson[question]])
-					}
-				}
-			}
-		}
+      const questionsJson = await data.json();
+      for(let question = 0; question < questionsJson.length; question++) {
+        let currentTopic = questionsJson[question].getQuestionType;
 
-		fetchQuestions();
-	}, [])
+        for(let i = 0; i < topics.length; i++) {
+          if(topics[i].title == currentTopic) {
+            topicQuestionsMap.set(currentTopic, (topicQuestionsMap.get(currentTopic) ?? 0) + 1)
+          }
+          else {
+            // this set function might cause errors because of type errors...
+            setSolvedQuestions(prev => [...prev, questionsJson[question]])
+          }
+        }
+      }
+    }
 
-	useEffect(() => {
-		console.log(solvedQuestions);
-	}, [solvedQuestions])
+    fetchQuestions();
+  }, [])
+
+  useEffect(() => {
+    console.log(solvedQuestions);
+  }, [solvedQuestions])
 
   return (
     <div className="w-full min-h-screen">
       <div className="container mx-auto py-8 px-4">
         <div className="mb-8">
-					<div className="flex gap-2">
-						<h1 className="text-3xl font-bold mb-2">
-							mockr
-						</h1>
-						<h1 className="text-3xl mb-2">
-							Practice Dashboard
-						</h1>
-					</div>
+          <div className="flex gap-2">
+            <h1 className="text-3xl font-bold mb-2">
+              mockr
+            </h1>
+            <h1 className="text-3xl mb-2">
+              Practice Dashboard
+            </h1>
+          </div>
           <p className="text-gray-600">
             Select a topic to start practicing interview questions
           </p>
@@ -109,11 +109,11 @@ export default function Practice() {
               title={topic.title}
               description={topic.description}
               icon={topic.icon}
-							solved={topicQuestionsMap.get(topic.title) ?? 0}
+              solved={topicQuestionsMap.get(topic.title) ?? 0}
               onClick={() => 
-								{
-								router.push(`practice/${topic.title}`)}
-							}
+              {
+                  router.push(`practice/${topic.title}`)}
+              }
             />
           ))}
         </div>

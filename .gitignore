@@ -76,3 +76,4 @@ backend/build/
 
 ### VS Code ###
 backend/.vscode/
+.vscode
