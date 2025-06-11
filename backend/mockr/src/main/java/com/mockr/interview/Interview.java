@@ -22,63 +22,63 @@ public class Interview {
     )
 
     private Long id; 
-    private Long user_id;
-    private Long question_id;
+    private String userId;
+    private String question;
     private String code;
-    private int communication;
-    private int result;
+    private String communication;
+    private String result;
 
     Interview() {}
 
-    Interview(Long user_id, Long question_id, String code, int communication, int result) {
-        this.user_id = user_id;
-        this.question_id = question_id;
+    Interview(String userId, String question, String code, String communication, String result) {
+        this.userId = userId;
+        this.question = question;
         this.code = code;
         this.communication = communication;
         this.result = result;
     }
 
-    Long getId() {
+    public Long getId() {
         return id;
     }
 
-    Long getUserId() {
-        return user_id;
+    public String getUserId() {
+        return userId;
     }
 
-    Long getQuestionId() {
-        return question_id;
+    public String getQuestion() {
+        return question;
     }
 
-    String getCode() {
+    public String getCode() {
         return code;
     }
 
-    int getCommunication() {
+    public String getCommunication() {
         return communication;
     }
 
-    int getResult() {
+    public String getResult() {
         return result;
     }
 
-    void setUserId(Long user_id) {
-        this.user_id = user_id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    void setQuestionId(Long question_id) {
-        this.question_id = question_id;
+    public void setQuestion(String question) {
+        this.question = question;
     }
 
-    void setCode(String code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
-    void setCommunication(int communication) {
+    public void setCommunication(String communication) {
         this.communication = communication;
     }
 
-    void setResult(int result) {
+    public void setResult(String result) {
         this.result = result;
     }
 

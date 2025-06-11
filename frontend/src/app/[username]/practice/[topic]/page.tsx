@@ -17,27 +17,24 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { arraysAndHashing, twoPointers, slidingWindow, binarySearch, linkedList, trees, heapAndPriorityQueue} from "@/lib/utils";
+import { topicQuestions } from "@/lib/utils";
 
 export default function TopicPage() {
-  const [currentQuestions, setCurrentQuestions] = useState<Question[] | null>(null);
+  const [currentQuestions, setCurrentQuestions] = useState<Record<string, Question>| null>(null);
   const searchParams = useParams();
   const username = (searchParams.username && !Array.isArray(searchParams.username)) ? decodeURIComponent(searchParams.username) : "";
   const topic = (searchParams.topic && !Array.isArray(searchParams.topic)) ? decodeURIComponent(searchParams.topic) : "";
 
   useEffect(() => {
-    const storedQuestions = [arraysAndHashing, twoPointers, slidingWindow, binarySearch, linkedList, trees, heapAndPriorityQueue];
-
-    for(let i = 0; i < storedQuestions.length; i++) {
-      if (storedQuestions[i][0].questionType == topic) {
-        setCurrentQuestions(storedQuestions[i]);
-        break;
-      }
-    }
+    let questions = topicQuestions[topic];
+    console.log("questions: ", questions);
+    setCurrentQuestions(questions)
   }, [])
 
   useEffect(() => {
-    console.log(currentQuestions);
+    if (currentQuestions != null) {
+      console.log(Object.values(currentQuestions));
+    }
   }, [currentQuestions])
 
   return (
@@ -58,7 +55,7 @@ export default function TopicPage() {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {currentQuestions?.map((question) => (
+          {currentQuestions && Object.values(currentQuestions).map((question) => (
             <Card key={question.id} className="hover:shadow-lg transition-all">
               <CardHeader>
                 <div className="flex justify-between items-start">
