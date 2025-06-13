@@ -7,9 +7,16 @@ import {
 	BrainCircuit,
 	Database,
 	Layers,
+  Brackets
 } from "lucide-react";
 
 export const topics = [
+	{
+		title: "Arrays and Hashing",
+		description:
+		"Master the two-pointer technique for array and string problems with efficient O(n) solutions.",
+		icon: <Brackets className="h-6 w-6" />,
+	},
 	{
 		title: "Two Pointers",
 		description:
@@ -51,12 +58,6 @@ export const topics = [
 		description:
 		"Solve problems involving finding the kth largest/smallest elements efficiently.",
 		icon: <Database className="h-6 w-6" />,
-	},
-	{
-		title: "System Design",
-		description:
-		"Practice designing scalable systems and discussing architectural trade-offs.",
-		icon: <Layers className="h-6 w-6" />,
 	},
 ];
 
