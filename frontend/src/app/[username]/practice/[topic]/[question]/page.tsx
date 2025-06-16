@@ -1,7 +1,18 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react";
-import { useParams } from "next/navigation"; import { Button } from "@/components/ui/button"; import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"; import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog";
+import { useParams } from "next/navigation"; 
+import { Button } from "@/components/ui/button"; 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"; 
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger 
+} from "@/components/ui/dialog";
 import Editor from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 import { topicQuestions } from "@/lib/utils";

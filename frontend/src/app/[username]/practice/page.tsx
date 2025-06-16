@@ -75,6 +75,7 @@ export default function Practice() {
             setSolvedQuestions(prev => [...prev, questionsJson[question]])
           }
         }
+
       }
     }
 
