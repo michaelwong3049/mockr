@@ -14,7 +14,7 @@ export const topics = [
 	{
 		title: "Arrays and Hashing",
 		description:
-		"Master the two-pointer technique for array and string problems with efficient O(n) solutions.",
+		"Understand how to leverage arrays and dictionaries to solve questions efficiently.",
 		icon: <Brackets className="h-6 w-6" />,
 	},
 	{
@@ -60,5 +60,4 @@ export const topics = [
 		icon: <Database className="h-6 w-6" />,
 	},
 ];
-
 

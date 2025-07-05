@@ -48,7 +48,6 @@ function TopicCard ({
 };
 
 export default function Practice() {
-  // TODO: add type generic for this later...
   const [solvedQuestions, setSolvedQuestions] = useState<Question[]>([]);
   const topicQuestionsMap = new Map<string, number>();
   const router = useRouter();
@@ -75,6 +74,7 @@ export default function Practice() {
             setSolvedQuestions(prev => [...prev, questionsJson[question]])
           }
         }
+
       }
     }
 

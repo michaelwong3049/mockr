@@ -1,28 +1,54 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react";
-import { useParams } from "next/navigation"; import { Button } from "@/components/ui/button"; import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"; import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog";
+import { useParams } from "next/navigation"; 
+
+import { Button } from "@/components/ui/button"; 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"; 
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger 
+} from "@/components/ui/dialog";
+
+import { useAuth } from "@clerk/nextjs";
 import Editor from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
-import { topicQuestions } from "@/lib/utils";
-import { useAuth } from "@clerk/nextjs";
+
+import { Question, arraysAndHashing } from "@/lib/utils";
 
 export default function InterviewPage() {
   const [startInterview, setStartInterview] = useState(false);
-  const [code, setCode] = useState<string | undefined>("// Write your code here");
+  const [runTestCases, setRunTestCases] = useState(false);
+  const [interviewData, setInterviewData] = useState<[string, Question]>();
   const editorRef = useRef<null | monaco.editor.IStandaloneCodeEditor>(null);
   const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => { editorRef.current = editor }
-  const searchParams = useParams();
+  const [code, setCode] = useState<string | undefined>();
   const { userId } = useAuth();
+  const [timeLeft, setTimeLeft] = useState(60 * 45)
 
-  const topic = (searchParams.topic && !Array.isArray(searchParams.topic)) ? decodeURIComponent(searchParams.topic) : "";
-  const question = (searchParams.question && !Array.isArray(searchParams.question)) ? decodeURIComponent(searchParams.question) : "";
-  const interviewData = topicQuestions[topic][question];
+  useEffect(() => {
+    const stored = localStorage.getItem("selectedQuestion");
+    if (stored) {
+      const [questionName, questionObj] = JSON.parse(stored) as [string, Question];
+      console.log("Name:", questionName);
+      console.log("Question:", questionObj);
+      setInterviewData([questionName, questionObj]);
+    }
+  }, [])
 
-  const [timeLeft, setTimeLeft] = useState(60 * 45);
+  useEffect(() => {
+    if (interviewData) {
+      const func_name = interviewData[0].toLowerCase().replace(/ /g, "_");
+      setCode(`def ${func_name}():\n\treturn 1+1\n\nprint(${func_name}())`)
+    }
+  }, [interviewData])
 
-  // once a user starts the interview, if the user ends, timer runs out, or crashes, upload this to DB
-  // TODO: should add the functionality for the timer
+  // timer stuff
   useEffect(() => { 
     if (startInterview) {
       console.log("the interval is starting!!");
@@ -34,7 +60,12 @@ export default function InterviewPage() {
     }
   }, [startInterview])
 
+  // uploading when timer ends
   useEffect(() => {
+    if (!interviewData) {
+      return;
+    }
+
     const uploadInterview = async () => {
       try {
         const data = await fetch("/api/interview", {
@@ -44,7 +75,7 @@ export default function InterviewPage() {
           },
           body: JSON.stringify({
             userId: userId,
-            question: question,
+            question: interviewData[0],
             code: code,
             communication: "10",
             result: "A-"
@@ -63,6 +94,43 @@ export default function InterviewPage() {
     }
 
   }, [timeLeft])
+
+  // modal running code
+  useEffect(() => {
+    const runCode = async () => {
+      console.log("Running Test Cases...");
+
+      if (!interviewData) {
+        console.error("There isnt interivewData...");
+        throw new Error("No interviewData found...");
+      }
+
+      const runCodeData = {
+        code: code,
+        interviewData: interviewData[1]
+      }
+
+      try {
+        const data = await fetch("/api/modal", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(runCodeData)
+        })
+
+        const json = await data.json();
+        console.log(json);
+      } catch {
+        console.error("-- error getting fetch from question page");
+      }
+
+      }
+    if (runTestCases) {
+      runCode();
+      setRunTestCases(false);
+    }
+  }, [runTestCases])
 
   return (
     <>
@@ -84,8 +152,9 @@ export default function InterviewPage() {
           </DialogContent>
         </Dialog>
       ): (
-          <div className="flex flex-col w-full h-screen">
-            <div className="flex justify-center py-4">
+          <div className="flex flex-col w-full h-screen overflow-hidden">
+            <div className="flex items-center justify-center py-4">
+              <Button className="mr-4" onClick={() => setRunTestCases(true)}>Run Tests</Button>
               <div className="bg-black text-white px-6 py-2 rounded-xl text-2xl font-mono tracking-widest shadow-md">
                 Remaining Time: {Math.floor(timeLeft / 60)
                   .toString()
@@ -102,23 +171,32 @@ export default function InterviewPage() {
                     <TabsTrigger value="testcases">Test Cases</TabsTrigger>
                   </TabsList>
                   <TabsContent value="question" className="h-full overflow-auto">
-                    <h2 className="text-2xl font-bold mb-4">{interviewData.question}</h2>
-                    <p className="mb-4">{interviewData.description}</p>
+                    <h2 className="text-2xl font-bold mb-4">{interviewData ? interviewData[0] : "Loading..."}</h2>
+                    <p className="mb-4">{interviewData ? interviewData[1].description : "Loading..."}</p>
                     <h3 className="text-xl font-semibold mb-2">Constraints:</h3>
-                    <pre className="bg-gray-100 p-2 rounded">{interviewData.constraints}</pre>
+                    <pre className="bg-gray-100 p-2 rounded">{interviewData ? interviewData[1].constraints : "Loading"}</pre>
                     <h3 className="text-xl font-semibold mt-4 mb-2">Examples:</h3>
-                    <pre className="bg-gray-100 p-2 rounded">{interviewData.examples}</pre>
+                    <pre className="bg-gray-100 p-2 rounded">{interviewData ? interviewData[1].test_cases.map((val, idx) => {
+                      return (
+                        <div key={idx} className="border-2 border-black mb-2">
+                          <pre className="bg-gray-100 p-2 rounded">{val.input}</pre>
+                          <pre className="bg-gray-100 p-2 rounded">{val.output}</pre>
+                        </div>
+                      )
+                      }) : "Loading..."}
+                    </pre>
                   </TabsContent>
                   <TabsContent value="testcases" className="h-full overflow-auto">
                     <h3 className="text-xl font-semibold mb-2">Test Cases:</h3>
                     <pre className="bg-gray-100 p-2 rounded">
-                      {`Test Case 1:
-                        Input: ...
-                        Expected Output: ...
-
-                        Test Case 2:
-                        Input: ...
-                        Expected Output: ...`}
+                      {interviewData ? interviewData[1].test_cases.map((val) => {
+                        return (
+                          <div className="border-2 border-black mb-2">
+                            <pre className="bg-gray-100 p-2 rounded">{val.input}</pre>
+                            <pre className="bg-gray-100 p-2 rounded">{val.output}</pre>
+                          </div>
+                        )
+                      }) : "Loading..."}
                     </pre>
                   </TabsContent>
                 </Tabs>
@@ -133,12 +211,16 @@ export default function InterviewPage() {
                 </div>
                 <div className="w-full">
                   <Editor
-                    height="90vh"
+                    height="800px"
                     onChange={(e) => setCode(e)}
                     defaultLanguage="python"
-                    defaultValue="// write function"
+                    defaultValue={code}
                     theme="vs-dark"
                     onMount={handleEditorDidMount}
+                    options={{
+                      minimap: { enabled: false },
+                      folding: true
+                    }}
                   />
                 </div>
               </div>
