@@ -48,7 +48,6 @@ function TopicCard ({
 };
 
 export default function Practice() {
-  // TODO: add type generic for this later...
   const [solvedQuestions, setSolvedQuestions] = useState<Question[]>([]);
   const topicQuestionsMap = new Map<string, number>();
   const router = useRouter();
