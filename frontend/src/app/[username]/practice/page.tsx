@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { topics } from "@/lib/topics";
-import { Question } from "@/lib/utils";
+import { Question, sendApiRequest } from "@/lib/utils";
 
 interface TopicCardProps {
   title: string;
@@ -54,12 +54,7 @@ export default function Practice() {
 
   useEffect(() => {
     const fetchQuestions = async () => {
-      const data = await fetch("http://localhost:8080/api/question", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
-        }
-      })
+      const data = await sendApiRequest("/api/question", "GET");
 
       const questionsJson = await data.json();
       for(let question = 0; question < questionsJson.length; question++) {
