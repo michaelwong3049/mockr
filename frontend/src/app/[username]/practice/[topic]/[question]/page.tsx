@@ -19,7 +19,8 @@ import { useAuth } from "@clerk/nextjs";
 import Editor from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 
-import { Question, arraysAndHashing } from "@/lib/utils";
+import { sendApiRequest, boilerplateCode, Question } from "@/lib/utils";
+import { any } from "zod";
 
 export default function InterviewPage() {
   const [startInterview, setStartInterview] = useState(false);
@@ -29,8 +30,10 @@ export default function InterviewPage() {
   const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => { editorRef.current = editor }
   const [code, setCode] = useState<string | undefined>();
   const { userId } = useAuth();
-  const [timeLeft, setTimeLeft] = useState(60 * 45)
+  const [timeLeft, setTimeLeft] = useState(5)
+  // const [timeLeft, setTimeLeft] = useState(60 * 45)
 
+  // request the current question
   useEffect(() => {
     const stored = localStorage.getItem("selectedQuestion");
     if (stored) {
@@ -43,15 +46,12 @@ export default function InterviewPage() {
 
   useEffect(() => {
     if (interviewData) {
-      const func_name = interviewData[0].toLowerCase().replace(/ /g, "_");
-      setCode(`def ${func_name}():\n\treturn 1+1\n\nprint(${func_name}())`)
+      setCode(boilerplateCode(interviewData[0]))
     }
   }, [interviewData])
 
-  // timer stuff
   useEffect(() => { 
     if (startInterview) {
-      console.log("the interval is starting!!");
       const interval = setInterval(() => {
         setTimeLeft(prev => prev - 1);
       }, 1000)
@@ -60,77 +60,36 @@ export default function InterviewPage() {
     }
   }, [startInterview])
 
-  // uploading when timer ends
   useEffect(() => {
     if (!interviewData) {
-      return;
+      return
     }
 
-    const uploadInterview = async () => {
-      try {
-        const data = await fetch("/api/interview", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId: userId,
-            question: interviewData[0],
-            code: code,
-            communication: "10",
-            result: "A-"
-          })
-        })
-
-        const res = await data.json();
-        console.log(res)
-      } catch {
-        console.error("Error with post request")
-      }
-    }
-
+    // should upload interview to DB
     if (timeLeft == 0) {
-      uploadInterview();
-    }
-
-  }, [timeLeft])
-
-  // modal running code
-  useEffect(() => {
-    const runCode = async () => {
-      console.log("Running Test Cases...");
-
-      if (!interviewData) {
-        console.error("There isnt interivewData...");
-        throw new Error("No interviewData found...");
+      const postInterviewBody = {
+        userId: userId!,
+        question: interviewData[0],
+        code: code!,
+        communication: "10",
+        result: "A-"
       }
 
-      const runCodeData = {
-        code: code,
+      sendApiRequest("/api/interview/", "POST", postInterviewBody);
+    }
+
+    // shoud run test cases
+    if (runTestCases) {
+      const postModalBody = {
+        code: code!,
         interviewData: interviewData[1]
       }
 
-      try {
-        const data = await fetch("/api/modal", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(runCodeData)
-        })
-
-        const json = await data.json();
-        console.log(json);
-      } catch {
-        console.error("-- error getting fetch from question page");
-      }
-
-      }
-    if (runTestCases) {
-      runCode();
+      sendApiRequest("/api/modal/", "POST", postModalBody);
       setRunTestCases(false);
     }
-  }, [runTestCases])
+
+  }, [timeLeft, runTestCases])
 
   return (
     <>

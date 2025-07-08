@@ -20,27 +20,23 @@ import {
 
 import { getDifficultyColor } from "@/lib/utils";
 import { useParams } from "next/navigation";
-import { arraysAndHashing, twoPointers, slidingWindow } from "@/lib/utils";
+import { arraysAndHashing, twoPointers, slidingWindow, binarySearch} from "@/lib/utils";
 
 export default function TopicPage() {
   const [currentQuestions, setCurrentQuestions] = useState<Array<string | any>>();
   const searchParams = useParams();
   const username = (searchParams.username && !Array.isArray(searchParams.username)) ? decodeURIComponent(searchParams.username) : "";
   const currTopic = (searchParams.topic && !Array.isArray(searchParams.topic)) ? decodeURIComponent(searchParams.topic) : "";
-  const topics = [arraysAndHashing, twoPointers, slidingWindow];
+  const topics = [arraysAndHashing, twoPointers, slidingWindow, binarySearch];
   const router = useRouter();
 
   useEffect(() => {
-    setCurrentQuestions(Object.entries(topics[0]))
-  }, [])
-
-  useEffect(() => {
-    if (currentQuestions) {
-      for(let question = 0; question< currentQuestions.length; question++) {
-        console.log(currentQuestions[question].difficulty) 
+    for(let topic = 0; topic < topics.length; topic++) {
+      if(Object.values(topics[topic])[0].questionType == currTopic) {
+        setCurrentQuestions(Object.entries(topics[topic]))
       }
     }
-  }, [currentQuestions])
+  }, [])
 
   const routeToInterview = (question: any) => {
     localStorage.setItem("selectedQuestion", JSON.stringify(question))
