@@ -6,9 +6,15 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 // this function takes the name of the question you are solving and "initalizes" the IDE to have some code written already
-export function boilerplateCode(questionName: string) {
-    const func_name = questionName[0].toLowerCase().replace(/ /g, "_");
-    return (`def ${func_name}():\n\treturn 1+1\n\nprint(${func_name}())`);
+export function boilerplateCode(interviewData: InterviewData) {
+  const functionName = interviewData[0].toLowerCase().replace(/ /g, "_");
+  const questionType = interviewData[1].questionType;
+
+  if (questionType == "Linked List") {
+    return (`class LinkedList:\n\tdef __init__(self,value):\n\tself.val = value\nself.next = None\n\ndef __repr(self):\nreturn f"TreeNode({self.val})"\ndef ${functionName}():\n\treturn 1+1\n\nprint(${functionName}())`);
+  }
+  
+  return (`def ${functionName}():\n\treturn 1+1\n\nprint(${functionName}())`);
 }
 
 export function getDifficultyColor (difficulty: string) {
@@ -26,6 +32,8 @@ export function getDifficultyColor (difficulty: string) {
     return "bg-gray-100 text-gray-800 hover:bg-gray-200";
   }
 };
+
+type InterviewData = [string, Question];
 
 interface ApiInterview {
   userId: string;
@@ -92,6 +100,7 @@ export async function sendApiRequest(apiUrl: string, apiMethod: string, apiParam
     const data = await fetch(apiUrl, fetchOptions);
 
     const response = await data.json();
+    console.log(response);
     return response;
   } catch {
     console.error("Error in sendApiRequest");
@@ -1205,3 +1214,626 @@ export const binarySearch: Record<string, Question> = {
   }
 };
 
+export const linkedLists: Record<string, Question> = {
+  "Reverse Linked List": {
+    id: 53,
+    questionType: "Linked List",
+    difficulty: "Easy",
+    description: "Reverse a singly linked list.",
+    constraints: "The number of nodes in the list is the range [0, 5000], -5000 <= Node.val <= 5000",
+    test_cases: [
+      {
+        input: "head = [1, 2, 3, 4, 5]",
+        output: "[5, 4, 3, 2, 1]"
+      },
+      {
+        input: "head = [1, 2]",
+        output: "[2, 1]"
+      },
+      {
+        input: "head = []",
+        output: "[]"
+      }
+    ]
+  },
+  "Merge Two Sorted Lists": {
+    id: 54,
+    questionType: "Linked List",
+    difficulty: "Easy",
+    description: "Merge two sorted linked lists and return it as a new sorted list.",
+    constraints: "The number of nodes in both lists is in the range [0, 50], -100 <= Node.val <= 100",
+    test_cases: [
+      {
+        input: "list1 = [1, 2, 4], list2 = [1, 3, 4]",
+        output: "[1, 1, 2, 3, 4, 4]"
+      },
+      {
+        input: "list1 = [], list2 = []",
+        output: "[]"
+      },
+      {
+        input: "list1 = [], list2 = [0]",
+        output: "[0]"
+      }
+    ]
+  },
+  "Linked List Cycle": {
+    id: 55,
+    questionType: "Linked List",
+    difficulty: "Easy",
+    description: "Given a linked list, determine if it has a cycle in it using Floyd’s Cycle-Finding Algorithm.",
+    constraints: "The number of nodes in the list is in the range [0, 10^4], -10^5 <= Node.val <= 10^5",
+    test_cases: [
+      {
+        input: "head = [3, 2, 0, -4], pos = 1",
+        output: "true"
+      },
+      {
+        input: "head = [1, 2], pos = 0",
+        output: "true"
+      },
+      {
+        input: "head = [1], pos = -1",
+        output: "false"
+      }
+    ]
+  },
+  "Remove Nth Node From End": {
+    id: 56,
+    questionType: "Linked List",
+    difficulty: "Medium",
+    description: "Remove the nth node from the end of the list and return its head.",
+    constraints: "The number of nodes in the list is sz, 1 <= sz <= 30, 0 <= Node.val <= 100",
+    test_cases: [
+      {
+        input: "head = [1,2,3,4,5], n = 2",
+        output: "[1,2,3,5]"
+      },
+      {
+        input: "head = [1], n = 1",
+        output: "[]"
+      },
+      {
+        input: "head = [1,2], n = 1",
+        output: "[1]"
+      }
+    ]
+  },
+  "Add Two Numbers": {
+    id: 57,
+    questionType: "Linked List",
+    difficulty: "Medium",
+    description: "Add two numbers represented by linked lists in reverse order and return the sum as a linked list.",
+    constraints: "The number of nodes in each linked list is in the range [1, 100], 0 <= Node.val <= 9, input lists do not contain leading zeros except the number 0 itself",
+    test_cases: [
+      {
+        input: "l1 = [2, 4, 3], l2 = [5, 6, 4]",
+        output: "[7, 0, 8]"
+      },
+      {
+        input: "l1 = [0], l2 = [0]",
+        output: "[0]"
+      },
+      {
+        input: "l1 = [9,9,9,9,9,9,9], l2 = [9,9,9,9]",
+        output: "[8,9,9,9,0,0,0,1]"
+      }
+    ]
+  },
+  "Copy List with Random Pointer": {
+    id: 58,
+    questionType: "Linked List",
+    difficulty: "Medium",
+    description: "Given a linked list where each node has a random pointer, return a deep copy of the list.",
+    constraints: "0 <= n <= 1000, -10000 <= Node.val <= 10000",
+    test_cases: [
+      {
+        input: "head = [[7,null],[13,0],[11,4],[10,2],[1,0]]",
+        output: "[[7,null],[13,0],[11,4],[10,2],[1,0]]"
+      },
+      {
+        input: "head = [[1,1],[2,1]]",
+        output: "[[1,1],[2,1]]"
+      },
+      {
+        input: "head = []",
+        output: "[]"
+      }
+    ]
+  }
+};
+
+export const trees: Record<string, Question> = {
+  "Maximum Depth of Binary Tree": {
+    id: 59,
+    questionType: "Trees",
+    difficulty: "Easy",
+    description: "Given the root of a binary tree, return its maximum depth.",
+    constraints: "The number of nodes in the tree is in the range [0, 10^4], -100 <= Node.val <= 100",
+    test_cases: [
+      {
+        input: "root = [3,9,20,null,null,15,7]",
+        output: "3"
+      },
+      {
+        input: "root = [1,null,2]",
+        output: "2"
+      },
+      {
+        input: "root = []",
+        output: "0"
+      }
+    ]
+  },
+  "Invert Binary Tree": {
+    id: 60,
+    questionType: "Trees",
+    difficulty: "Easy",
+    description: "Invert a binary tree by swapping left and right children of all nodes.",
+    constraints: "The number of nodes in the tree is in the range [0, 100], -100 <= Node.val <= 100",
+    test_cases: [
+      {
+        input: "root = [4,2,7,1,3,6,9]",
+        output: "[4,7,2,9,6,3,1]"
+      },
+      {
+        input: "root = [2,1,3]",
+        output: "[2,3,1]"
+      },
+      {
+        input: "root = []",
+        output: "[]"
+      }
+    ]
+  },
+  "Diameter of Binary Tree": {
+    id: 61,
+    questionType: "Trees",
+    difficulty: "Easy",
+    description: "Return the length of the longest path between any two nodes in a binary tree. The path may or may not pass through the root.",
+    constraints: "The number of nodes in the tree is in the range [1, 10^4], -100 <= Node.val <= 100",
+    test_cases: [
+      {
+        input: "root = [1,2,3,4,5]",
+        output: "3"
+      },
+      {
+        input: "root = [1,2]",
+        output: "1"
+      },
+      {
+        input: "root = [1,2,3,null,4]",
+        output: "3"
+      }
+    ]
+  },
+  "Validate Binary Search Tree": {
+    id: 62,
+    questionType: "Trees",
+    difficulty: "Medium",
+    description: "Determine if a given binary tree is a valid binary search tree (BST).",
+    constraints: "-2^31 <= Node.val <= 2^31 - 1, The tree must follow BST properties.",
+    test_cases: [
+      {
+        input: "root = [2,1,3]",
+        output: "true"
+      },
+      {
+        input: "root = [5,1,4,null,null,3,6]",
+        output: "false"
+      },
+      {
+        input: "root = [1,1]",
+        output: "false"
+      }
+    ]
+  },
+  "Lowest Common Ancestor of BST": {
+    id: 63,
+    questionType: "Trees",
+    difficulty: "Medium",
+    description: "Given a BST and two nodes, return their lowest common ancestor (LCA).",
+    constraints: "All Node values are unique, The tree is a BST, All Node values are between [-10^9, 10^9]",
+    test_cases: [
+      {
+        input: "root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8",
+        output: "6"
+      },
+      {
+        input: "root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 4",
+        output: "2"
+      },
+      {
+        input: "root = [2,1], p = 2, q = 1",
+        output: "2"
+      }
+    ]
+  },
+  "Serialize and Deserialize Binary Tree": {
+    id: 64,
+    questionType: "Trees",
+    difficulty: "Hard",
+    description: "Design an algorithm to serialize and deserialize a binary tree.",
+    constraints: "The number of nodes is in the range [0, 10^4], -1000 <= Node.val <= 1000",
+    test_cases: [
+      {
+        input: "root = [1,2,3,null,null,4,5]",
+        output: "deserialize(serialize(root)) == root"
+      },
+      {
+        input: "root = []",
+        output: "null"
+      },
+      {
+        input: "root = [1]",
+        output: "[1]"
+      }
+    ]
+  },
+  "Construct Binary Tree from Preorder and Inorder Traversal": {
+    id: 65,
+    questionType: "Trees",
+    difficulty: "Medium",
+    description: "Given preorder and inorder traversal of a tree, construct the binary tree.",
+    constraints: "1 <= preorder.length <= 3000, preorder and inorder contain unique values",
+    test_cases: [
+      {
+        input: "preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]",
+        output: "[3,9,20,null,null,15,7]"
+      },
+      {
+        input: "preorder = [-1], inorder = [-1]",
+        output: "[-1]"
+      },
+      {
+        input: "preorder = [1,2], inorder = [2,1]",
+        output: "[1,2]"
+      }
+    ]
+  }
+};
+
+export const graphs: Record<string, Question> = {
+  "Number of Connected Components in an Undirected Graph": {
+    id: 66,
+    questionType: "Graphs",
+    difficulty: "Medium",
+    description: "Given n nodes labeled from 0 to n - 1 and a list of undirected edges, return the number of connected components in the graph.",
+    constraints: "1 <= n <= 2000, 0 <= edges.length <= 5000",
+    test_cases: [
+      {
+        input: "n = 5, edges = [[0,1],[1,2],[3,4]]",
+        output: "2"
+      },
+      {
+        input: "n = 5, edges = [[0,1],[1,2],[2,3],[3,4]]",
+        output: "1"
+      },
+      {
+        input: "n = 3, edges = []",
+        output: "3"
+      }
+    ]
+  },
+  "Clone Graph": {
+    id: 67,
+    questionType: "Graphs",
+    difficulty: "Medium",
+    description: "Given a reference of a node in a connected undirected graph, return a deep copy (clone) of the graph.",
+    constraints: "-100 <= Node.val <= 100, Number of Nodes <= 100",
+    test_cases: [
+      {
+        input: "adjList = [[2,4],[1,3],[2,4],[1,3]]",
+        output: "[[2,4],[1,3],[2,4],[1,3]]"
+      },
+      {
+        input: "adjList = [[]]",
+        output: "[[]]"
+      },
+      {
+        input: "adjList = []",
+        output: "[]"
+      }
+    ]
+  },
+  "Course Schedule (Cycle Detection)": {
+    id: 68,
+    questionType: "Graphs",
+    difficulty: "Medium",
+    description: "There are a total of numCourses courses to take. Some courses have prerequisites. Return true if it is possible to finish all courses.",
+    constraints: "1 <= numCourses <= 2000, 0 <= prerequisites.length <= 5000",
+    test_cases: [
+      {
+        input: "numCourses = 2, prerequisites = [[1,0]]",
+        output: "true"
+      },
+      {
+        input: "numCourses = 2, prerequisites = [[1,0],[0,1]]",
+        output: "false"
+      },
+      {
+        input: "numCourses = 3, prerequisites = [[1,0],[2,1]]",
+        output: "true"
+      }
+    ]
+  },
+  "Graph Valid Tree": {
+    id: 69,
+    questionType: "Graphs",
+    difficulty: "Medium",
+    description: "Given n nodes and a list of undirected edges, determine if the graph forms a valid tree.",
+    constraints: "1 <= n <= 2000, 0 <= edges.length <= 5000",
+    test_cases: [
+      {
+        input: "n = 5, edges = [[0,1],[0,2],[0,3],[1,4]]",
+        output: "true"
+      },
+      {
+        input: "n = 5, edges = [[0,1],[1,2],[2,3],[1,3],[1,4]]",
+        output: "false"
+      },
+      {
+        input: "n = 1, edges = []",
+        output: "true"
+      }
+    ]
+  },
+  "Pacific Atlantic Water Flow": {
+    id: 70,
+    questionType: "Graphs",
+    difficulty: "Medium",
+    description: "Return a list of grid coordinates where water can flow to both the Pacific and Atlantic oceans.",
+    constraints: "m == heights.length, n == heights[i].length, 1 <= m, n <= 200, 0 <= heights[i][j] <= 10^5",
+    test_cases: [
+      {
+        input: "heights = [[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]]",
+        output: "[[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]]"
+      },
+      {
+        input: "heights = [[1]]",
+        output: "[[0,0]]"
+      },
+      {
+        input: "heights = [[10,10,10],[10,1,10],[10,10,10]]",
+        output: "[[0,0],[0,1],[0,2],[1,0],[1,2],[2,0],[2,1],[2,2]]"
+      }
+    ]
+  }
+};
+
+export const dynamicProgramming: Record<string, Question> = {
+  "Climbing Stairs": {
+    id: 71,
+    questionType: "Dynamic Programming",
+    difficulty: "Easy",
+    description: "You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?",
+    constraints: "1 <= n <= 45",
+    test_cases: [
+      {
+        input: "n = 2",
+        output: "2"
+      },
+      {
+        input: "n = 3",
+        output: "3"
+      },
+      {
+        input: "n = 5",
+        output: "8"
+      }
+    ]
+  },
+  "House Robber": {
+    id: 72,
+    questionType: "Dynamic Programming",
+    difficulty: "Medium",
+    description: "You are a professional robber planning to rob houses along a street. Each house has a certain amount of money. Adjacent houses cannot be robbed. Return the maximum amount you can rob.",
+    constraints: "1 <= nums.length <= 100, 0 <= nums[i] <= 400",
+    test_cases: [
+      {
+        input: "nums = [1,2,3,1]",
+        output: "4"
+      },
+      {
+        input: "nums = [2,7,9,3,1]",
+        output: "12"
+      },
+      {
+        input: "nums = [2,1,1,2]",
+        output: "4"
+      }
+    ]
+  },
+  "Coin Change": {
+    id: 73,
+    questionType: "Dynamic Programming",
+    difficulty: "Medium",
+    description: "You are given coins of different denominations and a total amount. Return the fewest number of coins needed to make up that amount. If that amount cannot be made up, return -1.",
+    constraints: "1 <= coins.length <= 12, 1 <= coins[i] <= 2^31 - 1, 0 <= amount <= 10^4",
+    test_cases: [
+      {
+        input: "coins = [1,2,5], amount = 11",
+        output: "3"
+      },
+      {
+        input: "coins = [2], amount = 3",
+        output: "-1"
+      },
+      {
+        input: "coins = [1], amount = 0",
+        output: "0"
+      }
+    ]
+  },
+  "Longest Increasing Subsequence": {
+    id: 74,
+    questionType: "Dynamic Programming",
+    difficulty: "Medium",
+    description: "Given an integer array, return the length of the longest strictly increasing subsequence.",
+    constraints: "1 <= nums.length <= 2500, -10^4 <= nums[i] <= 10^4",
+    test_cases: [
+      {
+        input: "nums = [10,9,2,5,3,7,101,18]",
+        output: "4"
+      },
+      {
+        input: "nums = [0,1,0,3,2,3]",
+        output: "4"
+      },
+      {
+        input: "nums = [7,7,7,7,7,7,7]",
+        output: "1"
+      }
+    ]
+  },
+  "Edit Distance": {
+    id: 75,
+    questionType: "Dynamic Programming",
+    difficulty: "Hard",
+    description: "Given two strings word1 and word2, return the minimum number of operations to convert word1 to word2. Operations allowed: insert, delete, or replace a character.",
+    constraints: "0 <= word1.length, word2.length <= 500",
+    test_cases: [
+      {
+        input: "word1 = 'horse', word2 = 'ros'",
+        output: "3"
+      },
+      {
+        input: "word1 = 'intention', word2 = 'execution'",
+        output: "5"
+      },
+      {
+        input: "word1 = '', word2 = 'a'",
+        output: "1"
+      }
+    ]
+  },
+  "Best Time to Buy and Sell Stock": {
+    id: 76,
+    questionType: "Dynamic Programming",
+    difficulty: "Easy",
+    description: "You are given an array where the ith element is the price of a stock on day i. Return the maximum profit you can achieve. You may only complete one transaction.",
+    constraints: "1 <= prices.length <= 10^5, 0 <= prices[i] <= 10^4",
+    test_cases: [
+      {
+        input: "prices = [7,1,5,3,6,4]",
+        output: "5"
+      },
+      {
+        input: "prices = [7,6,4,3,1]",
+        output: "0"
+      },
+      {
+        input: "prices = [1,2]",
+        output: "1"
+      }
+    ]
+  }
+};
+
+export const heaps: Record<string, Question> = {
+  "Kth Largest Element in an Array": {
+    id: 77,
+    questionType: "Heaps & Priority Queues",
+    difficulty: "Medium",
+    description: "Return the kth largest element in an unsorted array. Note that it is the kth largest element in sorted order, not the kth distinct element.",
+    constraints: "1 <= k <= nums.length <= 10^5, -10^4 <= nums[i] <= 10^4",
+    test_cases: [
+      {
+        input: "nums = [3,2,1,5,6,4], k = 2",
+        output: "5"
+      },
+      {
+        input: "nums = [3,2,3,1,2,4,5,5,6], k = 4",
+        output: "4"
+      },
+      {
+        input: "nums = [1], k = 1",
+        output: "1"
+      }
+    ]
+  },
+  "Top K Frequent Elements": {
+    id: 78,
+    questionType: "Heaps & Priority Queues",
+    difficulty: "Medium",
+    description: "Given an integer array and an integer k, return the k most frequent elements.",
+    constraints: "1 <= nums.length <= 10^5, k is in the range [1, the number of unique elements in nums]",
+    test_cases: [
+      {
+        input: "nums = [1,1,1,2,2,3], k = 2",
+        output: "[1,2]"
+      },
+      {
+        input: "nums = [1], k = 1",
+        output: "[1]"
+      },
+      {
+        input: "nums = [4,1,-1,2,-1,2,3], k = 2",
+        output: "[-1,2]"
+      }
+    ]
+  },
+  "Merge k Sorted Lists": {
+    id: 79,
+    questionType: "Heaps & Priority Queues",
+    difficulty: "Hard",
+    description: "You are given an array of k linked-lists, each sorted in ascending order. Merge all the linked-lists into one sorted linked-list and return it.",
+    constraints: "k == lists.length, 0 <= k <= 10^4, 0 <= Node.val <= 10^4",
+    test_cases: [
+      {
+        input: "lists = [[1,4,5],[1,3,4],[2,6]]",
+        output: "[1,1,2,3,4,4,5,6]"
+      },
+      {
+        input: "lists = []",
+        output: "[]"
+      },
+      {
+        input: "lists = [[]]",
+        output: "[]"
+      }
+    ]
+  },
+  "Find Median from Data Stream": {
+    id: 80,
+    questionType: "Heaps & Priority Queues",
+    difficulty: "Hard",
+    description: "Design a data structure that supports adding numbers and finding the median of all elements efficiently.",
+    constraints: "You may assume that the number of elements is always less than 10^5.",
+    test_cases: [
+      {
+        input: "addNum(1), addNum(2), findMedian()",
+        output: "1.5"
+      },
+      {
+        input: "addNum(3), findMedian()",
+        output: "2"
+      },
+      {
+        input: "addNum(5), addNum(10), findMedian()",
+        output: "3"
+      }
+    ]
+  },
+  "Reorganize String": {
+    id: 81,
+    questionType: "Heaps & Priority Queues",
+    difficulty: "Medium",
+    description: "Rearrange a string so that no two adjacent characters are the same. If not possible, return an empty string.",
+    constraints: "1 <= s.length <= 500, s consists of lowercase letters",
+    test_cases: [
+      {
+        input: "s = 'aab'",
+        output: "aba"
+      },
+      {
+        input: "s = 'aaab'",
+        output: ""
+      },
+      {
+        input: "s = 'vvvlo'",
+        output: "vlvov"
+      }
+    ]
+  }
+};

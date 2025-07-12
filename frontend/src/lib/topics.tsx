@@ -30,7 +30,7 @@ export const topics = [
 		icon: <SlidersHorizontal className="h-6 w-6" />,
 	},
 	{
-		title: "Linked Lists",
+		title: "Linked List",
 		description:
 		"Practice traversal, reversal, and manipulation of singly and doubly linked lists.",
 		icon: <ListTree className="h-6 w-6" />,

@@ -20,19 +20,20 @@ import {
 
 import { getDifficultyColor } from "@/lib/utils";
 import { useParams } from "next/navigation";
-import { arraysAndHashing, twoPointers, slidingWindow, binarySearch} from "@/lib/utils";
+import { arraysAndHashing, twoPointers, slidingWindow, binarySearch, linkedList, trees, graphs, dynamicProgramming, heaps } from "@/lib/utils";
 
 export default function TopicPage() {
   const [currentQuestions, setCurrentQuestions] = useState<Array<string | any>>();
   const searchParams = useParams();
   const username = (searchParams.username && !Array.isArray(searchParams.username)) ? decodeURIComponent(searchParams.username) : "";
   const currTopic = (searchParams.topic && !Array.isArray(searchParams.topic)) ? decodeURIComponent(searchParams.topic) : "";
-  const topics = [arraysAndHashing, twoPointers, slidingWindow, binarySearch];
+  const topics = [arraysAndHashing, twoPointers, slidingWindow, binarySearch, linkedList, trees, graphs, dynamicProgramming, heaps];
   const router = useRouter();
 
   useEffect(() => {
     for(let topic = 0; topic < topics.length; topic++) {
-      if(Object.values(topics[topic])[0].questionType == currTopic) {
+      const questionTopic = Object.values(topics[topic])[0].questionType;
+      if(questionTopic == currTopic) {
         setCurrentQuestions(Object.entries(topics[topic]))
       }
     }
