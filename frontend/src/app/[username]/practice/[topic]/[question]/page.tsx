@@ -20,7 +20,6 @@ import Editor from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 
 import { sendApiRequest, boilerplateCode, Question } from "@/lib/utils";
-import { any } from "zod";
 
 export default function InterviewPage() {
   const [startInterview, setStartInterview] = useState(false);
@@ -46,7 +45,7 @@ export default function InterviewPage() {
 
   useEffect(() => {
     if (interviewData) {
-      setCode(boilerplateCode(interviewData[0]))
+      setCode(boilerplateCode(interviewData))
     }
   }, [interviewData])
 
@@ -85,7 +84,8 @@ export default function InterviewPage() {
         interviewData: interviewData[1]
       }
 
-      sendApiRequest("/api/modal/", "POST", postModalBody);
+      const res = sendApiRequest("/api/modal/", "POST", postModalBody);
+      console.log(res);
       setRunTestCases(false);
     }
 
