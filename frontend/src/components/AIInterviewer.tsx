@@ -17,25 +17,25 @@ export default function AIInterviewer() {
   const [myToken, setMyToken] = useState<string>();
   const room = "demo-room";
   const name = "demo-name";
- 
+
   useEffect(() => {
     if(shouldFetchToken) { const fetchToken = async() => {
-	const data = await fetch(`/api/livekit?room=${room}&username=${name}`, {
-	  method: "GET",
-	  headers: {
-	    "Content-Type": "application/json"
-	  }
-	});
+      const data = await fetch(`/api/livekit?room=${room}&username=${name}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
 
-	if(data.ok) {
-	  const json = await data.json();
-	  console.log(json.token);
-	  setMyToken(json.token);
-	} else {
-	  console.log(data);
-	  throw new Error("Error fetching the token")
-	}
+      if(data.ok) {
+        const json = await data.json();
+        console.log(json.token);
+        setMyToken(json.token);
+      } else {
+        console.log(data);
+        throw new Error("Error fetching the token")
       }
+    }
 
       fetchToken();
     }
@@ -55,21 +55,21 @@ export default function AIInterviewer() {
       </div>
       <span className="text-sm font-medium"></span>
       <LiveKitRoom
-	token={myToken}
-	serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL}
-	connect={true}
-	audio={true}
-	data-lk-theme="default"
-	onError={(error) => {
-	  console.log("---- error here ----");
-	  console.error("Livekit connection error", error);
-	}}
+        token={myToken}
+        serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL}
+        connect={true}
+        audio={true}
+        data-lk-theme="default"
+        onError={(error) => {
+          console.log("---- error here ----");
+          console.error("Livekit connection error", error);
+        }}
       >
-	<SimpleVoiceAssistant/>
-	<RoomAudioRenderer/>
+        <SimpleVoiceAssistant/>
+        <RoomAudioRenderer/>
       </LiveKitRoom>
       <Button onClick={() => setShouldFetchToken(true)}>
-	Start Conversation
+        Start Conversation
       </Button>
     </div>
   )
