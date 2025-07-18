@@ -14,6 +14,10 @@ import {
   DialogTitle, 
   DialogTrigger 
 } from "@/components/ui/dialog";
+import AIInterviewer from "@/components/AIInterviewer";
+import ConversationControls from "@/components/ConversationControls";
+
+import { io } from "socket.io-client";
 
 import { useAuth } from "@clerk/nextjs";
 import Editor from "@monaco-editor/react";
@@ -25,23 +29,41 @@ export default function InterviewPage() {
   const [startInterview, setStartInterview] = useState(false);
   const [runTestCases, setRunTestCases] = useState(false);
   const [interviewData, setInterviewData] = useState<[string, Question]>();
+
   const editorRef = useRef<null | monaco.editor.IStandaloneCodeEditor>(null);
   const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => { editorRef.current = editor }
   const [code, setCode] = useState<string | undefined>();
+
   const { userId } = useAuth();
-  const [timeLeft, setTimeLeft] = useState(5)
-  // const [timeLeft, setTimeLeft] = useState(60 * 45)
+  const [timeLeft, setTimeLeft] = useState(60 * 45);
+  // const timeLeft = useRef(60 * 45);
+
+  const socket = io("http://127.0.0.1:5000");
 
   // request the current question
   useEffect(() => {
     const stored = localStorage.getItem("selectedQuestion");
     if (stored) {
       const [questionName, questionObj] = JSON.parse(stored) as [string, Question];
-      console.log("Name:", questionName);
-      console.log("Question:", questionObj);
       setInterviewData([questionName, questionObj]);
     }
   }, [])
+
+  // socketio logic
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("--- connected to socketio ---");
+    })
+
+    const data = {
+      code: code,
+      interviewData: interviewData
+    }
+
+    socket.emit("update interview", data, () => {
+      console.log("coding")
+    })
+  }, [code])
 
   useEffect(() => {
     if (interviewData) {
@@ -52,7 +74,7 @@ export default function InterviewPage() {
   useEffect(() => { 
     if (startInterview) {
       const interval = setInterval(() => {
-        setTimeLeft(prev => prev - 1);
+        setTimeLeft(timeLeft - 1)
       }, 1000)
 
       return () => clearInterval(interval);
@@ -111,7 +133,7 @@ export default function InterviewPage() {
           </DialogContent>
         </Dialog>
       ): (
-          <div className="flex flex-col w-full h-screen overflow-hidden">
+          <div className="flex flex-col w-full h-screen">
             <div className="flex items-center justify-center py-4">
               <Button className="mr-4" onClick={() => setRunTestCases(true)}>Run Tests</Button>
               <div className="bg-black text-white px-6 py-2 rounded-xl text-2xl font-mono tracking-widest shadow-md">
@@ -143,6 +165,7 @@ export default function InterviewPage() {
                         </div>
                       )
                       }) : "Loading..."}
+                    <AIInterviewer/>
                     </pre>
                   </TabsContent>
                   <TabsContent value="testcases" className="h-full overflow-auto">
