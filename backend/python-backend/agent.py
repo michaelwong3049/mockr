@@ -5,16 +5,27 @@ import asyncio
 import logging
 import os
 
-from livekit import rtc, api
+from dataclasses import dataclass
+from livekit import rtc, api, agents
 from livekit.agents import (
     AutoSubscribe,
     JobContext,
+    ChatContext,
+    ChatMessage,
+    RoomInputOptions,
+    RunContext,
     WorkerOptions,
+    AgentSession,
+    Agent,
+    function_tool,
     cli,
     llm,
 )
-from livekit.agents.multimodal import MultimodalAgent
+
 from livekit.plugins import openai
+from livekit.plugins.openai import realtime
+from livekit.protocol import agent
+from openai.types.beta.realtime.session import TurnDetection
 
 from flask import Flask
 from flask_cors import CORS
@@ -41,7 +52,8 @@ logger.addHandler(console_handler)
 # -- socketio logic --
 sio = socketio.Client()
 
-agent_context = ""
+interview_info = ""
+code = ""
 
 @sio.event
 def connect():
@@ -58,18 +70,14 @@ def disconnect(reason):
 
 @sio.event
 def agent_data(data):
-    global agent_context
-    print("getting code data?")
-    # question = data["data"].get("question")
+    global interview_info
+    global code
 
-    # code = data["data"].get("code")
-    # question = data["data"].get("interviewData")[0]
-    print(data)
-
-    # print("code: ", code, " question: ", question)
-
-    # agent_context = question
-    # print(agent_context)
+    question = data["interviewData"][0]
+    desc = data["interviewData"][1]["description"]
+    code = data["code"]
+    interview_info = question + " " + desc
+    print("here:", interview_info)
 
 # -- flask logic for livekit frontend --
 flask_app = Flask(__name__)
@@ -89,66 +97,86 @@ def getToken():
     ))
     return { "token": token.to_jwt() }
 
+
+class MockrAgent(Agent):
+    def __init__(self, chat_ctx: ChatContext):
+        super().__init__(instructions="You are an software engineer that interviews candidates and here you are going to interview a candidate today! Please state the current question that has been given to you in the chat context.", chat_ctx=chat_ctx)
+
+    @function_tool()
+    async def receive_code(self, context: RunContext):
+        """Use this tool to retreive interview data such as code written or current question"""
+        global code
+        print("here:ajsdkfjkasdkf", code)
+        def return_chat_context(chat_ctx: ChatContext, role, content) -> ChatContext:
+            chat_ctx.add_message(role=role, content=content)
+            print("chat_ctx: ", chat_ctx)
+            return chat_ctx
+
+        chat=self.chat_ctx.copy()
+        role="user"
+        content=code
+
+        return await self.update_chat_ctx(return_chat_context(chat, role, content))
+
 async def entrypoint(ctx: JobContext):
-    global agent_context
+    global interview_info
 
-    print("startin entrypoint")
+    sio.connect("http://127.0.0.1:5000/")
+    
+    while interview_info == "":
+        print("interview_info is empty")
+        await asyncio.sleep(1)
+
     logger.info("starting entrypoint")
-
-    logger.info("-----")
-    logger.info(agent_context)
-    logger.info("-----")
-
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
 
     participant = await ctx.wait_for_participant()
+    print("--- Found participant ---")
 
-    model = openai.realtime.RealtimeModel(
-        instructions="You are a AI mock software engineering interviewer.",
-        voice="shimmer",
-        temperature=0.8,
-        modalities=["audio", "text"],
+    session = AgentSession(
+        llm=realtime.RealtimeModel(
+            voice="coral",
+            turn_detection=TurnDetection(
+                type="server_vad",
+                threshold=0.5,
+                prefix_padding_ms=300,
+                silence_duration_ms=500,
+                create_response=True,
+                interrupt_response=True,
+            )
+        ),
     )
 
-    # chat_ctx = llm.ChatContext()
-    # chat_ctx.append(
-    #   text=agent_context,
-    #   role="assistant"
-    # )
+    print("chat_ctx: ", interview_info)
+    inital_ctx = ChatContext()
+    inital_ctx.insert(item=ChatMessage(role="assistant", content=[interview_info]))
 
-    chat_ctx = llm.ChatContext()
-
-    chat_ctx.append(
-        text=agent_context,
-        role="assistant"
-    )
-
-    assistant = MultimodalAgent(model=model, chat_ctx=chat_ctx)
-
-    logger.info("starting agent")
-    assistant.start(ctx.room, participant)
-
-    session = model.sessions[0]
-    session.conversation.item.create(
-        llm.ChatMessage(
-            role="assistant",
-            content=agent_context,
+    try:
+        await session.start(
+            room=ctx.room,
+            agent=MockrAgent(inital_ctx),
         )
-    )
-    session.response.create()
-    print("trying generate a reply")
 
-    assistant.generate_reply()
+        print("Started session")
+    except Exception as e:
+        print(f"--- Error starting session {e} ---")
+    
+    try:
+        print("agent Context: ")
+        print(interview_info)
+        await session.generate_reply(
+            user_input=interview_info,
+            instructions="In English, state the current given question from the chat_ctx/chat context"
+        )
+        print("Generating response..")
+    except Exception as e:
+        print(f"--- Error generating reply in agent.py: {e} ---")
 
-async def setup():
-    global agent_context
-    while agent_context == "":
-        await asyncio.sleep(1)
-        print("Agent is now populated")
-        print(agent_context)
+    
 
 if __name__ == "__main__":
-    logger.info("testing part 2")
-    sio.connect("http://127.0.0.1:5000/")
-    asyncio.run(setup())
-    cli.run_app(WorkerOptions(entrypoint_fnc=entrypoint))
+    try:
+        print("cli")
+        cli.run_app(WorkerOptions(entrypoint_fnc=entrypoint))
+    except Exception:
+        print("Error starting entrypoint in try block")

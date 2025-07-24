@@ -29,6 +29,7 @@ export default function InterviewPage() {
   const [startInterview, setStartInterview] = useState(false);
   const [runTestCases, setRunTestCases] = useState(false);
   const [interviewData, setInterviewData] = useState<[string, Question]>();
+  const [conversationStarted, setConversationStarted] = useState(false);
 
   const editorRef = useRef<null | monaco.editor.IStandaloneCodeEditor>(null);
   const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => { editorRef.current = editor }
@@ -48,6 +49,20 @@ export default function InterviewPage() {
       setInterviewData([questionName, questionObj]);
     }
   }, [])
+
+  // if the conversation has stared, give the info to agent
+  useEffect(() => {
+    if (conversationStarted && code && interviewData) {
+      const data = {
+        code: code,
+        interviewData: interviewData
+      }
+
+      socket.emit("update interview", data, () => {
+        console.log("coding")
+      })
+    }
+  }, [conversationStarted])
 
   // socketio logic
   useEffect(() => {
@@ -165,7 +180,7 @@ export default function InterviewPage() {
                         </div>
                       )
                       }) : "Loading..."}
-                    <AIInterviewer/>
+                    <AIInterviewer onConversationStart={() => setConversationStarted(true)}/>
                     </pre>
                   </TabsContent>
                   <TabsContent value="testcases" className="h-full overflow-auto">
