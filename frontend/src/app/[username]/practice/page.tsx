@@ -56,20 +56,22 @@ export default function Practice() {
     const fetchQuestions = async () => {
       const data = await sendApiRequest("/api/question", "GET");
 
-      const questionsJson = await data.json();
-      for(let question = 0; question < questionsJson.length; question++) {
-        let currentTopic = questionsJson[question].getQuestionType;
+      if (data.length > 0) {
+        const questionsJson = await data.json;
+        for(let question = 0; question < questionsJson.length; question++) {
+          let currentTopic = questionsJson[question].getQuestionType;
 
-        for(let i = 0; i < topics.length; i++) {
-          if(topics[i].title == currentTopic) {
-            topicQuestionsMap.set(currentTopic, (topicQuestionsMap.get(currentTopic) ?? 0) + 1)
+          for(let i = 0; i < topics.length; i++) {
+            if(topics[i].title == currentTopic) {
+              topicQuestionsMap.set(currentTopic, (topicQuestionsMap.get(currentTopic) ?? 0) + 1)
+            }
+            else {
+              // this set function might cause errors because of type errors...
+              setSolvedQuestions(prev => [...prev, questionsJson[question]])
+            }
           }
-          else {
-            // this set function might cause errors because of type errors...
-            setSolvedQuestions(prev => [...prev, questionsJson[question]])
-          }
+
         }
-
       }
     }
 
