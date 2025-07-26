@@ -67,8 +67,8 @@ export default function TopicPage() {
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <CardTitle className="text-xl">{question[0]}</CardTitle>
-                  <Badge className={question[1].difficulty}>
-                    {question.difficulty}
+                  <Badge variant={undefined} className={getDifficultyColor(question[1].difficulty)}>
+                    {question[1].difficulty}
                   </Badge>
                 </div>
                 {question[1].description && (
