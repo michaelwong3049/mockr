@@ -53,32 +53,22 @@ export default function InterviewPage() {
   // if the conversation has stared, give the info to agent
   useEffect(() => {
     if (conversationStarted && code && interviewData) {
+      console.log("conversation has started");
+
       const data = {
         code: code,
         interviewData: interviewData
       }
 
-      socket.emit("update interview", data, () => {
-        console.log("coding")
-      })
+      socket.on("connect", () => {
+        setTimeout(() => {
+          socket.emit("update interview", data, () => {
+            console.log("emitting to agent??");
+          });
+        }, 5000); // 5000 ms = 5 seconds
+      });
     }
   }, [conversationStarted])
-
-  // socketio logic
-  useEffect(() => {
-    socket.on("connect", () => {
-      console.log("--- connected to socketio ---");
-    })
-
-    const data = {
-      code: code,
-      interviewData: interviewData
-    }
-
-    socket.emit("update interview", data, () => {
-      console.log("coding")
-    })
-  }, [code])
 
   useEffect(() => {
     if (interviewData) {

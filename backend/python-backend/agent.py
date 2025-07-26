@@ -120,12 +120,23 @@ class MockrAgent(Agent):
 
 async def entrypoint(ctx: JobContext):
     global interview_info
+    print("in entrypoint")
 
-    sio.connect("http://127.0.0.1:5000/")
-    
+    try:
+        sio.connect("http://127.0.0.1:5000/")
+    except Exception as e:
+        print("failure to connect to socketio", e)
+
+    print("--- connected ---")
+
     while interview_info == "":
         print("interview_info is empty")
         await asyncio.sleep(1)
+
+    if interview_info:
+        print("Got interview info!!", interview_info)
+
+    print("returning?")
 
     logger.info("starting entrypoint")
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)

@@ -12,7 +12,7 @@ import {
   VoiceAssistantControlBar,
 } from "@livekit/components-react";
 
-export default function AIInterviewer() {
+export default function AIInterviewer({ onConversationStart }: { onConversationStart: () => void }) {
   const [shouldFetchToken, setShouldFetchToken] = useState<boolean>(false); 
   const [myToken, setMyToken] = useState<string>();
   const room = "demo-room";
@@ -31,6 +31,7 @@ export default function AIInterviewer() {
         const json = await data.json();
         console.log(json.token);
         setMyToken(json.token);
+        onConversationStart();
       } else {
         console.log(data);
         throw new Error("Error fetching the token")
