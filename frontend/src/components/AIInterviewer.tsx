@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { useState, useEffect } from 'react';
 
 import "@livekit/components-styles";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; 
 import {
   LiveKitRoom,
   useVoiceAssistant,
@@ -43,15 +44,13 @@ export default function AIInterviewer({ onConversationStart }: { onConversationS
   }, [shouldFetchToken])
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="bg-zinc-900 flex flex-col items-center">
       {/* AI Interviewer with radiating ring */}
       <div className="relative mb-2">
         <div
           className={`absolute inset-0 rounded-full ${"bg-transparent"}`}
         ></div>
         <div className="relative">
-          <div className="h-16 w-16 rounded-full overflow-hidden border-2 border-primary">
-          </div>
         </div>
       </div>
       <span className="text-sm font-medium"></span>
@@ -69,7 +68,7 @@ export default function AIInterviewer({ onConversationStart }: { onConversationS
         <SimpleVoiceAssistant/>
         <RoomAudioRenderer/>
       </LiveKitRoom>
-      <Button onClick={() => setShouldFetchToken(true)}>
+      <Button variant="outline" className="my-2 py-2 text-white bg-gray-900" onClick={() => setShouldFetchToken(true)}>
         Start Conversation
       </Button>
     </div>
@@ -79,9 +78,8 @@ export default function AIInterviewer({ onConversationStart }: { onConversationS
 function SimpleVoiceAssistant() {
   const { state, audioTrack } = useVoiceAssistant(); 
   return (
-    <div className="h-80">
+    <div className="bg-gray-900 h-40">
       <BarVisualizer state={state} trackRef={audioTrack} barCount={5} style={{}}></BarVisualizer>
-      <p className="text-center my-8">{state}</p>
     </div>
   )
 }
