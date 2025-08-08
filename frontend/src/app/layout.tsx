@@ -29,28 +29,30 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
-}>) {
+    children: React.ReactNode;
+  }>) {
   return (
     <ClerkProvider>
       <html lang="en"> 
-	<body
-	  className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-	>
-	  <header>
-	    <SignedOut>
-	      <SignInButton/>
-	    </SignedOut>
-	    <SignedIn>
-	      {/* <UserButton/> */}
-	    </SignedIn>
-	  </header>
-	  <SidebarProvider>
-	    <AppSidebar />
-	    <SidebarTrigger />
-	    {children}
-	  </SidebarProvider>
-	</body>
+        <body
+          className={`bg-black ${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <header>
+            <SignedOut>
+              <SignInButton/>
+            </SignedOut>
+            <SignedIn>
+              {/* <UserButton/> */}
+            </SignedIn>
+          </header>
+          <SidebarProvider>
+            <AppSidebar />
+            <div className="flex flex-col h-screen overflow-hidden">
+              <SidebarTrigger className="text-white" />
+              {children}
+            </div>
+          </SidebarProvider>
+        </body>
       </html>
     </ClerkProvider>
   );
