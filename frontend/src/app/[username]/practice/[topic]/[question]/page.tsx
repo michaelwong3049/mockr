@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react";
-import { useParams } from "next/navigation"; 
 
 import { Button } from "@/components/ui/button"; 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; 
@@ -12,10 +11,9 @@ import {
   DialogDescription, 
   DialogHeader, 
   DialogTitle, 
-  DialogTrigger 
 } from "@/components/ui/dialog";
+import { TargetIcon } from "lucide-react";
 import AIInterviewer from "@/components/AIInterviewer";
-import ConversationControls from "@/components/ConversationControls";
 
 import { io } from "socket.io-client";
 
@@ -79,7 +77,7 @@ export default function InterviewPage() {
   useEffect(() => { 
     if (startInterview) {
       const interval = setInterval(() => {
-        setTimeLeft(timeLeft - 1)
+        setTimeLeft(prev => prev - 1)
       }, 1000)
 
       return () => clearInterval(interval);
@@ -138,10 +136,10 @@ export default function InterviewPage() {
           </DialogContent>
         </Dialog>
       ): (
-          <div className="flex flex-col w-full h-screen">
+          <div className="bg-gray-700 flex flex-col w-full h-screen overflow-hidden">
             <div className="flex items-center justify-center py-4">
-              <Button className="mr-4" onClick={() => setRunTestCases(true)}>Run Tests</Button>
-              <div className="bg-black text-white px-6 py-2 rounded-xl text-2xl font-mono tracking-widest shadow-md">
+              <Button variant={"outline"} className="bg-gray-900 mr-4 border-gray-400 text-white" onClick={() => setRunTestCases(true)}>Run Tests</Button>
+              <div className="border-2 border-gray-400 text-white px-2 py-2 rounded-xl font-mono tracking-widest">
                 Remaining Time: {Math.floor(timeLeft / 60)
                   .toString()
                   .padStart(2, "0")}
@@ -149,62 +147,87 @@ export default function InterviewPage() {
                 {(timeLeft % 60).toString().padStart(2, "0")}
               </div>
             </div>
+
             <div className="flex">
-              <div className="w-2/3 p-4 flex flex-col">
-                <Tabs defaultValue="question" className="flex-grow">
-                  <TabsList>
-                    <TabsTrigger value="question">Question</TabsTrigger>
-                    <TabsTrigger value="testcases">Test Cases</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="question" className="h-full overflow-auto">
-                    <h2 className="text-2xl font-bold mb-4">{interviewData ? interviewData[0] : "Loading..."}</h2>
-                    <p className="mb-4">{interviewData ? interviewData[1].description : "Loading..."}</p>
-                    <h3 className="text-xl font-semibold mb-2">Constraints:</h3>
-                    <pre className="bg-gray-100 p-2 rounded">{interviewData ? interviewData[1].constraints : "Loading"}</pre>
-                    <h3 className="text-xl font-semibold mt-4 mb-2">Examples:</h3>
-                    <pre className="bg-gray-100 p-2 rounded">{interviewData ? interviewData[1].test_cases.map((val, idx) => {
-                      return (
-                        <div key={idx} className="border-2 border-black mb-2">
-                          <pre className="bg-gray-100 p-2 rounded">{val.input}</pre>
-                          <pre className="bg-gray-100 p-2 rounded">{val.output}</pre>
-                        </div>
-                      )
-                      }) : "Loading..."}
-                    <AIInterviewer onConversationStart={() => setConversationStarted(true)}/>
-                    </pre>
-                  </TabsContent>
-                  <TabsContent value="testcases" className="h-full overflow-auto">
-                    <h3 className="text-xl font-semibold mb-2">Test Cases:</h3>
-                    <pre className="bg-gray-100 p-2 rounded">
-                      {interviewData ? interviewData[1].test_cases.map((val) => {
+              <div className="w-2/3 mx-4 flex flex-col">
+                
+                {/* Interview Data */}
+                <div className="bg-zinc-900 text-white h-3/5 p-4 border-2 border-gray-400">
+                  <Tabs defaultValue="question" className="h-full flex-grow">
+                    <TabsList className="bg-gray-900">
+                      <TabsTrigger value="question">Question</TabsTrigger>
+                      <TabsTrigger value="testcases">Test Cases</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="question" className="h-full overflow-auto">
+                      <div className="flex items-center my-4">
+                        <TargetIcon className="mr-2"/>
+                        <h2 className="font-bold">{interviewData ? interviewData[0] : "Loading..."}</h2>
+                      </div>
+                      <p className="mb-4">{interviewData ? interviewData[1].description : "Loading..."}</p>
+                      <h3 className="font-semibold mt-2 mb-2">Examples:</h3>
+                      <pre className="p-2 rounded-[25px]">{interviewData ? interviewData[1].test_cases.map((val, idx) => {
                         return (
-                          <div className="border-2 border-black mb-2">
-                            <pre className="bg-gray-100 p-2 rounded">{val.input}</pre>
-                            <pre className="bg-gray-100 p-2 rounded">{val.output}</pre>
+                          <div key={idx} className="">
+                            <pre className="p-2"><strong>Input: </strong>{val.input}</pre>
+                            <pre className="p-2"><strong>Output: </strong>{val.output}</pre>
                           </div>
                         )
-                      }) : "Loading..."}
-                    </pre>
-                  </TabsContent>
-                </Tabs>
-              </div>
-              <div className="w-full p-4 flex flex-col">
-                <div className="mb-4 flex items-center">
-                  <Avatar className="h-12 w-12 mr-4">
-                    <AvatarImage src="/placeholder.svg" alt="AI Interviewer" />
-                    <AvatarFallback>AI</AvatarFallback>
-                  </Avatar>
-                  <span className="text-lg font-semibold">AI Interviewer</span>
+                        }) : "Loading..."}
+                      </pre>
+                      <h3 className="font-semibold mb-2">Constraints:</h3>
+                      <pre className="bg-gray-900 p-2 rounded">{interviewData ? interviewData[1].constraints : "Loading"}</pre>
+                    </TabsContent>
+                    <TabsContent value="testcases" className="h-full overflow-auto">
+                      <h3 className="text-xl font-semibold mb-2">Test Cases:</h3>
+                      <pre className="bg-gray-900 p-2 rounded">
+                        {interviewData ? interviewData[1].test_cases.map((val, index) => {
+                          return (
+                            <div key={index} className="border-2 border-black mb-2">
+                              <pre className="bg-gray-900 p-2 rounded">{val.input}</pre>
+                              <pre className="bg-gray-900 p-2 rounded">{val.output}</pre>
+                            </div>
+                          )
+                        }) : "Loading..."}
+                      </pre>
+                    </TabsContent>
+                  </Tabs>
                 </div>
-                <div className="w-full">
+                <div className="border-2 mt-4"><AIInterviewer onConversationStart={() => setConversationStarted(true)}/></div>
+              </div>
+            
+              {/* Editor */}
+              <div className="w-full flex flex-col">
+                <div className="h-screen w-full">
                   <Editor
-                    height="800px"
+                    className="bg-gray-900 border-2 border-gray-400"
                     onChange={(e) => setCode(e)}
                     defaultLanguage="python"
                     defaultValue={code}
                     theme="vs-dark"
-                    onMount={handleEditorDidMount}
+
+                    onMount={(editor, monaco) => {
+                      handleEditorDidMount(editor);
+
+                      monaco.editor.defineTheme("custom-dark", {
+                        base: "vs-dark",
+                        inherit: true,
+                        rules: [],
+                        colors: {
+                          "editor.background": "#18181b", // same as Tailwind's bg-gray-900
+                        },
+                      });
+
+                      monaco.editor.setTheme("custom-dark");
+
+                      editor.updateOptions({
+                        automaticLayout: true,
+                        minimap: { enabled: false },
+                        folding: true,
+                      });
+                    }}
                     options={{
+                      fontSize: 14,
+                      automaticLayout: true,
                       minimap: { enabled: false },
                       folding: true
                     }}
