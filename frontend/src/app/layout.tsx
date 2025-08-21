@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/ui/app-sidebar";
 import {
   ClerkProvider,
@@ -35,22 +35,15 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en"> 
         <body
-          className={`bg-black ${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-900`}
         >
-          <header>
-            <SignedOut>
-              <SignInButton/>
-            </SignedOut>
-            <SignedIn>
-              {/* <UserButton/> */}
-            </SignedIn>
-          </header>
-          <SidebarProvider>
+          <SidebarProvider defaultOpen={false}>
             <AppSidebar />
-            <div className="flex flex-col h-screen overflow-hidden">
-              <SidebarTrigger className="text-white" />
-              {children}
-            </div>
+            <SidebarInset className="flex flex-col bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+              <div className="flex-1 overflow-hidden">
+                {children}
+              </div>
+            </SidebarInset>
           </SidebarProvider>
         </body>
       </html>
